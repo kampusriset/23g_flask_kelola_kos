@@ -1,3 +1,6 @@
+# MyKost Project
+# MIT License (c) 2025 AnakKost Team
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text

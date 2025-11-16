@@ -1,3 +1,6 @@
+# MyKost Project
+# MIT License (c) 2025 AnakKost Team
+
 from app import db
 from flask_login import UserMixin
 from datetime import datetime
