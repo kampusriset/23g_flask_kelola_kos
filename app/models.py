@@ -4,6 +4,7 @@
 from app import db
 from flask_login import UserMixin
 from datetime import datetime
+from app.extensions import db
 
 # USERS
 class User(db.Model, UserMixin):
@@ -19,9 +20,9 @@ class User(db.Model, UserMixin):
 class Kamar(db.Model):
     mykost_db = 'kamar'
     id = db.Column(db.Integer, primary_key=True)
-    nomor_kamar = db.Column(db.String(50), unique=True, nullabel=False)
+    nomor_kamar = db.Column(db.String(50), unique=True, nullable=False)
     tipe = db.Column(db.String(50))
-    harga = db.Column(db.Integer, nullabel=False)
+    harga = db.Column(db.Integer, nullable=False)
     status = db.Column(db.Enum('kosong', 'terisi'), default='kosong')
     fasilitas = db.Column(db.Text)
     keterangan = db.Column(db.Text)
@@ -30,7 +31,7 @@ class Kamar(db.Model):
 class Penghuni(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    nama = db.Column(db.String(150), nulllable=False)
+    nama = db.Column(db.String(150), nullable=False)
     no_hp = db.Column(db.String(20))
     alamat = db.Column(db.Text)
     jenis_kelamin = db.Column(db.Enum('L', 'P'))

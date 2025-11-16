@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyKost — Login</title>
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+
+<body class="min-h-screen flex items-center justify-center 
+             bg-gradient-to-br from-teal-400 via-blue-400 to-blue-600
+             dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
+             transition">
+
+  <div class="backdrop-blur-xl bg-white/20 dark:bg-white/5 
+              p-10 rounded-3xl shadow-xl w-full max-w-sm">
+
+    <div class="flex justify-center">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-32 drop-shadow-lg">
+    </div>
+
+    <h2 class="text-2xl font-bold text-center text-white dark:text-teal-200 mb-6">
+      Login ke MyKost
+    </h2>
+
+    <form method="POST">
+      {{ form.hidden_tag() }}
+
+      <!-- Username -->
+      <div class="mb-4">
+        {{ form.username.label(class="text-white dark:text-gray-200 font-medium") }}
+        {{ form.username(class="w-full mt-1 px-3 py-2 rounded-xl 
+                        bg-white/90 dark:bg-gray-700 dark:text-white 
+                        border border-white/40
+                        focus:ring-2 focus:ring-teal-300 outline-none") }}
+      </div>
+
+      <!-- Password -->
+      <div class="mb-6">
+        {{ form.password.label(class="text-white dark:text-gray-200 font-medium") }}
+        {{ form.password(class="w-full mt-1 px-3 py-2 rounded-xl 
+                           bg-white/90 dark:bg-gray-700 dark:text-white 
+                           border border-white/40
+                           focus:ring-2 focus:ring-teal-300 outline-none") }}
+      </div>
+
+      <!-- Button -->
+      {{ form.submit(class="w-full py-2 bg-blue-900 dark:bg-blue-700 
+                             text-white rounded-xl font-semibold
+                             hover:bg-blue-800 dark:hover:bg-blue-600 
+                             active:scale-95 transition-all duration-150") }}
+    </form>
+
+    <!-- Info Akun -->
+    <div class="mt-6 text-center text-sm">
+        <p class="text-white/90 dark:text-gray-300">
+            <span class="font-semibold text-white dark:text-teal-300">Admin kos</span> belum punya akun?
+            <a href="{{ url_for('auth.register') }}" class="underline font-semibold hover:text-white">
+            Daftar untuk kelola kos
+            </a>
+        </p>
+        <p class="text-white/70 dark:text-gray-400 mt-2 italic text-xs">
+            Penghuni tidak perlu daftar — akun akan dibuat oleh admin
+        </p>
+    </div>
+
+  </div>
+
+</body>
+</html>

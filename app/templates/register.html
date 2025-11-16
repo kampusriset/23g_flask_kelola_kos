@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyKost — Register</title>
+
+  <!-- Tailwind -->
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+
+<body class="min-h-screen flex items-center justify-center 
+             bg-gradient-to-br from-teal-400 via-blue-400 to-blue-600
+             dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
+             transition">
+
+  <!-- CARD -->
+  <div class="backdrop-blur-xl bg-white/20 dark:bg-white/5 
+              p-10 rounded-3xl shadow-xl w-full max-w-sm">
+
+    <!-- LOGO -->
+    <div class="flex justify-center">
+      <img src="../static/img/logo.png" class="w-32 drop-shadow-lg">
+    </div>
+
+    <h2 class="text-2xl font-bold text-center text-white dark:text-teal-200 mb-2">
+    Pendaftaran Admin Kos
+    </h2>
+    <p class="text-white/80 dark:text-gray-300 text-center text-sm mb-6">
+    Form ini hanya untuk pengelola kos yang ingin membuat akun admin. Penghuni tidak perlu mendaftar.
+    </p>
+
+    <form>
+
+      <!-- Nama -->
+      <div class="mb-4">
+        <label class="text-white dark:text-gray-200 font-medium">Nama Lengkap</label>
+        <input type="text"
+          class="w-full mt-1 px-3 py-2 rounded-xl 
+                 bg-white/90 dark:bg-gray-700 dark:text-white 
+                 border border-white/40
+                 focus:ring-2 focus:ring-teal-300 outline-none"
+          placeholder="Nama kamu">
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label class="text-white dark:text-gray-200 font-medium">Email</label>
+        <input type="email"
+          class="w-full mt-1 px-3 py-2 rounded-xl 
+                 bg-white/90 dark:bg-gray-700 dark:text-white 
+                 border border-white/40
+                 focus:ring-2 focus:ring-teal-300 outline-none"
+          placeholder="email@example.com">
+      </div>
+
+      <!-- Password -->
+      <div class="mb-6">
+        <label class="text-white dark:text-gray-200 font-medium">Password</label>
+        <input type="password"
+          class="w-full mt-1 px-3 py-2 rounded-xl
+                 bg-white/90 dark:bg-gray-700 dark:text-white 
+                 border border-white/40
+                 focus:ring-2 focus:ring-teal-300 outline-none"
+          placeholder="******">
+      </div>
+
+      <!-- Button -->
+      <button
+        class="w-full py-2 bg-blue-900 dark:bg-blue-700 
+               text-white rounded-xl font-semibold
+               hover:bg-blue-800 dark:hover:bg-blue-600 
+               active:scale-95 transition-all duration-150">
+        Daftar
+      </button>
+      <p class="text-white/70 dark:text-gray-400 mt-4 text-center text-xs italic">
+        Setelah mendaftar, Anda dapat login dan mulai mengelola data penghuni, kamar, dan pembayaran.
+      </p>
+
+    </form>
+
+    <!-- Login Link -->
+    <p class="text-white/90 dark:text-gray-300 mt-5 text-center text-sm">
+    Sudah punya akun admin?
+        <a href="{{ url_for('auth.login') }}" class="underline font-semibold hover:text-white">
+            Login di sini
+        </a>
+    </p>
+
+  </div>
+
+</body>
+</html>
