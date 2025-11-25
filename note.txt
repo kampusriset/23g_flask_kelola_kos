@@ -1,3 +1,6 @@
+//Untuk run tailwind
 npx tailwindcss -i ./app/static/css/input.css -o ./app/static/css/styles.css --watch
 
+//Untuk run app
+venv\Scripts\activate
 flask run

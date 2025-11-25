@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,12 +10,12 @@
 <body class="min-h-screen flex items-center justify-center 
              bg-gradient-to-br from-teal-400 via-blue-400 to-blue-600
              dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
-             transition">
+             transition px-4">
 
   <div class="backdrop-blur-xl bg-white/20 dark:bg-white/5 
-              p-10 rounded-3xl shadow-xl w-full max-w-sm">
+              p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-sm border border-white/30">
 
-    <div class="flex justify-center">
+    <div class="flex justify-center mb-4">
       <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-32 drop-shadow-lg">
     </div>
 
@@ -23,45 +23,67 @@
       Login ke MyKost
     </h2>
 
+    <!-- [BARU] Menampilkan Pesan Flash (Login Gagal/Sukses Register) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for category, message in messages %}
+            <div class="p-3 rounded-xl text-sm font-semibold border
+                 {{ 'bg-red-500/20 text-red-100 border-red-500/50' if category == 'danger' else 'bg-green-500/20 text-green-100 border-green-500/50' }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <form method="POST">
       {{ form.hidden_tag() }}
 
       <!-- Username -->
       <div class="mb-4">
-        {{ form.username.label(class="text-white dark:text-gray-200 font-medium") }}
-        {{ form.username(class="w-full mt-1 px-3 py-2 rounded-xl 
-                        bg-white/90 dark:bg-gray-700 dark:text-white 
-                        border border-white/40
-                        focus:ring-2 focus:ring-teal-300 outline-none") }}
+        {{ form.username.label(class="text-white dark:text-gray-200 font-medium text-sm ml-1") }}
+        {{ form.username(class="w-full mt-1 px-4 py-2 rounded-xl 
+                                bg-white/90 dark:bg-gray-700 dark:text-white 
+                                border border-white/40
+                                focus:ring-2 focus:ring-teal-300 outline-none placeholder-gray-400",
+                                placeholder="Masukkan username") }}
+        <!-- Error field validation (jika kosong) -->
+        {% for error in form.username.errors %}
+           <span class="text-red-200 text-xs font-bold block mt-1 ml-1">{{ error }}</span>
+        {% endfor %}
       </div>
 
       <!-- Password -->
       <div class="mb-6">
-        {{ form.password.label(class="text-white dark:text-gray-200 font-medium") }}
-        {{ form.password(class="w-full mt-1 px-3 py-2 rounded-xl 
-                           bg-white/90 dark:bg-gray-700 dark:text-white 
-                           border border-white/40
-                           focus:ring-2 focus:ring-teal-300 outline-none") }}
+        {{ form.password.label(class="text-white dark:text-gray-200 font-medium text-sm ml-1") }}
+        {{ form.password(class="w-full mt-1 px-4 py-2 rounded-xl 
+                                bg-white/90 dark:bg-gray-700 dark:text-white 
+                                border border-white/40
+                                focus:ring-2 focus:ring-teal-300 outline-none placeholder-gray-400",
+                                placeholder="Masukkan password") }}
       </div>
 
       <!-- Button -->
-      {{ form.submit(class="w-full py-2 bg-blue-900 dark:bg-blue-700 
-                             text-white rounded-xl font-semibold
-                             hover:bg-blue-800 dark:hover:bg-blue-600 
-                             active:scale-95 transition-all duration-150") }}
+      {{ form.submit(class="w-full py-2.5 bg-blue-900 dark:bg-blue-700 
+                            text-white rounded-xl font-bold shadow-lg cursor-pointer
+                            hover:bg-blue-800 dark:hover:bg-blue-600 
+                            hover:scale-[1.02] active:scale-95 transition-all duration-200") }}
     </form>
 
     <!-- Info Akun -->
     <div class="mt-6 text-center text-sm">
         <p class="text-white/90 dark:text-gray-300">
             <span class="font-semibold text-white dark:text-teal-300">Admin kos</span> belum punya akun?
-            <a href="{{ url_for('auth.register') }}" class="underline font-semibold hover:text-white">
-            Daftar untuk kelola kos
+            <a href="{{ url_for('auth.register') }}" class="underline font-semibold hover:text-yellow-300 transition ml-1">
+            Daftar di sini
             </a>
         </p>
-        <p class="text-white/70 dark:text-gray-400 mt-2 italic text-xs">
-            Penghuni tidak perlu daftar — akun akan dibuat oleh admin
-        </p>
+        <div class="mt-4 pt-4 border-t border-white/20">
+            <p class="text-white/60 dark:text-gray-400 text-xs italic">
+                Penghuni silakan minta akun ke Admin Kos.
+            </p>
+        </div>
     </div>
 
   </div>

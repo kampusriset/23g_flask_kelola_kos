@@ -2,38 +2,41 @@
 # MIT License (c) 2025 AnakKost Team
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, DateField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
-# Form Login
+# --- FORM LOGIN ---
+# Digunakan oleh Admin dan Penghuni
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=100)])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Login')
-    
-# Form Register
+    username = StringField('Username', validators=[
+        DataRequired(message="Username wajib diisi"),
+        Length(min=4, max=100, message="Username minimal 4 karakter")
+    ])
+    password = PasswordField('Password', validators=[
+        DataRequired(message="Password wajib diisi")
+    ])
+    submit = SubmitField('Masuk')
+
+# --- FORM REGISTER ---
+# Khusus untuk pendaftaran Admin baru
 class RegisterForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
-    confirm_password = PasswordField('Konfirmasi Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Daftar')
-
-
-# Form Pengaduan
-class PengaduanForm(FlaskForm):
-    judul = StringField('Judul Pengaduan', validators=[DataRequired(), Length(max=150)])
-    isi = TextAreaField('Isi Pengaduan', validators=[DataRequired()])
-    submit = SubmitField('Kirim')
-
-# Form Peraturan (admin)
-class PeraturanForm(FlaskForm):
-    isi = TextAreaField('Isi Peraturan', validators=[DataRequired()])
-    submit = SubmitField('Simpan')
-
-# Form Pembayaran (penghuni)
-class PembayaranForm(FlaskForm):
-    bulan = StringField('Bulan', validators=[DataRequired()])
-    jumlah = IntegerField('Jumlah Bayar', validators=[DataRequired()])
-    metode = SelectField('Metode Pembayaran', choices=[('transfer', 'Transfer'), ('tunai', 'Tunai')])
-    submit = SubmitField('Bayar')
+    username = StringField('Username', validators=[
+        DataRequired(message="Username wajib diisi")
+    ])
+    
+    email = StringField('Email', validators=[
+        DataRequired(message="Email wajib diisi"),
+        Email(message="Format email tidak valid")
+    ])
+    
+    password = PasswordField('Password', validators=[
+        DataRequired(message="Password wajib diisi"),
+        Length(min=6, message="Password minimal 6 karakter")
+    ])
+    
+    confirm_password = PasswordField('Konfirmasi Password', validators=[
+        DataRequired(message="Ulangi password Anda"),
+        EqualTo('password', message='Password tidak sama')
+    ])
+    
+    submit = SubmitField('Daftar Admin')
