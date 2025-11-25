@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Kamar MyKost</title>
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #333;
+            --muted: #777;
+            --shadow: 0 6px 16px rgba(0,0,0,0.08);
+            --primary: #4CAF50;
+            --danger: #E53935;
+            --warning: #FF9800;
+            --info: #2196F3;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+        }
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        header h1 {
+            margin: 0;
+        }
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filters select, .filters input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #fff;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .card .cover {
+            height: 140px;
+            background: linear-gradient(135deg, #6EE7B7, #3B82F6);
+        }
+        .card .content {
+            padding: 16px;
+        }
+        .room-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .room-number {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.8em;
+            color: #fff;
+        }
+        .available { background: var(--primary); }
+        .occupied  { background: var(--danger); }
+        .maintenance { background: var(--warning); }
+
+        .price {
+            font-weight: bold;
+            color: var(--info);
+            margin: 8px 0;
+        }
+        .muted { color: var(--muted); font-size: 0.9em; }
+
+        .amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0 14px;
+        }
+        .amenities span {
+            background: #f5f7fa;
+            border: 1px solid #e6eaf0;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-outline { background: #fff; border: 1px solid #ddd; color: #333; }
+
+        /* Footer info */
+        .legend {
+            margin-top: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .legend .dot {
+            width: 12px; height: 12px; border-radius: 50%;
+        }
+        .dot.available { background: var(--primary); }
+        .dot.occupied { background: var(--danger); }
+        .dot.maintenance { background: var(--warning); }
+
+        /* Responsive tweak */
+        @media (max-width: 520px) {
+            header { flex-direction: column; gap: 14px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛏️ Kamar MyKost</h1>
+            <div class="filters">
+                <input type="text" placeholder="Cari nomor kamar / penghuni">
+                <select>
+                    <option value="">Semua status</option>
+                    <option value="available">Tersedia</option>
+                    <option value="occupied">Terisi</option>
+                    <option value="maintenance">Perbaikan</option>
+                </select>
+                <select>
+                    <option value="">Urutkan</option>
+                    <option value="price_asc">Harga termurah</option>
+                    <option value="price_desc">Harga termahal</option>
+                    <option value="number_asc">Nomor kamar (A-Z)</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Kamar 101 -->
+            <div class="card">
+                <div class="cover"></div>
+                <div class="content">
+                    <div class="room-header">
+                        <div class="room-number">Kamar 101</div>
+                        <span class="badge available">Tersedia</span>
+                    </div>
+                    <div class="price">Rp 850.000 / bulan</div>
+                    <div class="muted">Lantai 1 • Ukuran 3x3 m • Kipas angin</div>
+                    <div class="amenities">
+                        <span>Kamar mandi dalam</span>
+                        <span>Meja & kursi</span>
+                        <span>Lemari</span>
+                        <span>Wi‑Fi</span>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-primary">Ajukan Sewa</button>
+                        <button class="btn btn-outline">Detail</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kamar 102 -->
+            <div class="card">
+                <div class="cover"></div>
+                <div class="content">
+                    <div class="room-header">
+                        <div class="room-number">Kamar 102</div>
+                        <span class="badge occupied">Terisi</span>
+                    </div>
+                    <div class="price">Rp 900.000 / bulan</div>
+                    <div class="muted">Lantai 1 • Ukuran 3x3.5 m • AC</div>
+                    <div class="amenities">
+                        <span>Kamar mandi dalam</span>
+                        <span>Kasur spring bed</span>
+                        <span>Lemari</span>
+                        <span>Wi‑Fi</span>
+                    </div>
+                    <div class="muted">Penghuni: Dzaki • Sejak: Sep 2025</div>
+                    <div class="actions">
+                        <button class="btn btn-outline">Detail</button>
+                        <button class="btn btn-outline">Riwayat</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kamar 201 -->
+            <div class="card">
+                <div class="cover"></div>
+                <div class="content">
+                    <div class="room-header">
+                        <div class="room-number">Kamar 201</div>
+                        <span class="badge maintenance">Perbaikan</span>
+                    </div>
+                    <div class="price">Rp 800.000 / bulan</div>
+                    <div class="muted">Lantai 2 • Ukuran 3x3 m • Kipas angin</div>
+                    <div class="amenities">
+                        <span>Kamar mandi luar</span>
+                        <span>Meja & kursi</span>
+                        <span>Lemari</span>
+                        <span>Wi‑Fi</span>
+                    </div>
+                    <div class="muted">Catatan: Perbaikan listrik, estimasi selesai 30 Nov 2025</div>
+                    <div class="actions">
+                        <button class="btn btn-outline">Detail</button>
+                        <button class="btn btn-outline">Laporkan</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kamar 202 -->
+            <div class="card">
+                <div class="cover"></div>
+                <div class="content">
+                    <div class="room-header">
+                        <div class="room-number">Kamar 202</div>
+                        <span class="badge available">Tersedia</span>
+                    </div>
+                    <div class="price">Rp 950.000 / bulan</div>
+                    <div class="muted">Lantai 2 • Ukuran 3.5x3.5 m • AC</div>
+                    <div class="amenities">
+                        <span>Kamar mandi dalam</span>
+                        <span>Water heater</span>
+                        <span>Meja belajar</span>
+                        <span>Wi‑Fi</span>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-primary">Ajukan Sewa</button>
+                        <button class="btn btn-outline">Detail</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><span class="dot available"></span> Tersedia</div>
+            <div class="legend-item"><span class="dot occupied"></span> Terisi</div>
+            <div class="legend-item"><span class="dot maintenance"></span> Perbaikan</div>
+        </div>
+    </div>
+</body>
+</html>

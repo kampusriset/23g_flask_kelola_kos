@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Jadwal MyKost</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 85%;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background: #f1f1f1;
+        }
+        .category {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+        .pembayaran { background: #4CAF50; }
+        .kegiatan { background: #2196F3; }
+        .perbaikan { background: #9C27B0; }
+        .rapat { background: #FF9800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Jadwal MyKost</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Kegiatan</th>
+                    <th>Kategori</th>
+                    <th>Detail</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>5 Desember 2025</td>
+                    <td>Pembayaran Kost Bulan Desember</td>
+                    <td><span class="category pembayaran">Pembayaran</span></td>
+                    <td>Transfer ke rekening BCA 123456789 a.n. Pemilik Kost, sertakan bukti ke admin.</td>
+                </tr>
+                <tr>
+                    <td>1 Desember 2025</td>
+                    <td>Bersih-Bersih Bersama</td>
+                    <td><span class="category kegiatan">Kegiatan</span></td>
+                    <td>Dimulai pukul 08.00 WIB, dilanjutkan sarapan bersama di ruang tamu.</td>
+                </tr>
+                <tr>
+                    <td>30 November 2025</td>
+                    <td>Perbaikan Instalasi Listrik</td>
+                    <td><span class="category perbaikan">Perbaikan</span></td>
+                    <td>Listrik dipadamkan sementara selama ±2 jam mulai pukul 09.00 WIB.</td>
+                </tr>
+                <tr>
+                    <td>10 Desember 2025</td>
+                    <td>Rapat Penghuni Kost</td>
+                    <td><span class="category rapat">Rapat</span></td>
+                    <td>Diskusi aturan baru & evaluasi kegiatan, pukul 19.00 WIB di ruang tamu.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
