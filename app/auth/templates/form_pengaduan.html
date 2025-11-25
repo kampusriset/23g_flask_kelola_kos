@@ -1,0 +1,7 @@
+<h2>Form Pengaduan</h2>
+<form method="POST">
+  {{ form.hidden_tag() }}
+  {{ form.judul.label }}<br>{{ form.judul() }}<br>
+  {{ form.isi.label }}<br>{{ form.isi() }}<br>
+  {{ form.submit() }}
+</form>

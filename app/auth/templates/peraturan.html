@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pengaturan My Kost</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>⚙️ Pengaturan My Kost</h1>
+        <form method="POST" class="form-settings" enctype="multipart/form-data">
+            
+            <!-- Profil -->
+            <h2>👤 Informasi Profil</h2>
+            <label>Nama Pengguna</label>
+            <input type="text" name="username" placeholder="Masukkan nama pengguna">
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Masukkan email">
+
+            <label>Nomor Telepon</label>
+            <input type="tel" name="phone" placeholder="Masukkan nomor telepon">
+
+            <label>Alamat Kost / Kamar</label>
+            <input type="text" name="address" placeholder="Masukkan alamat kost atau nomor kamar">
+
+            <label>Foto Profil</label>
+            <input type="file" name="profile_pic" accept="image/*">
+
+            <!-- Preferensi -->
+            <h2>🎨 Preferensi Aplikasi</h2>
+            <label>Tema Tampilan</label>
+            <select name="theme">
+                <option value="light">🌞 Light</option>
+                <option value="dark">🌙 Dark</option>
+            </select>
+
+            <label>Bahasa</label>
+            <select name="language">
+                <option value="id">Indonesia</option>
+                <option value="en">English</option>
+            </select>
+
+            <label>Notifikasi</label>
+            <select name="notif">
+                <option value="on">Aktif</option>
+                <option value="off">Nonaktif</option>
+            </select>
+
+            <!-- Keamanan -->
+            <h2>🔒 Keamanan</h2>
+            <label>Password Lama</label>
+            <input type="password" name="old_password" placeholder="Masukkan password lama">
+
+            <label>Password Baru</label>
+            <input type="password" name="new_password" placeholder="Masukkan password baru">
+
+            <label>Konfirmasi Password Baru</label>
+            <input type="password" name="confirm_password" placeholder="Ulangi password baru">
+
+            <!-- Tombol -->
+            <div class="buttons">
+                <button type="submit">💾 Simpan Pengaturan</button>
+                <button type="reset">❌ Batalkan</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

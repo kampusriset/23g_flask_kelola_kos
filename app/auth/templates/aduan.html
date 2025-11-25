@@ -1,0 +1,11 @@
+<h2>Daftar Pengaduan Saya</h2>
+<a href="{{ url_for('tambah_pengaduan') }}">Tambah Pengaduan</a>
+<ul>
+  {% for p in pengaduan_list %}
+    <li>
+      <strong>{{ p.judul }}</strong> - {{ p.status }}<br>
+      {{ p.isi }}<br>
+      <a href="{{ url_for('hapus_pengaduan', id=p.id) }}">Hapus</a>
+    </li>
+  {% endfor %}
+</ul>
