@@ -8,6 +8,7 @@
     "build": "tailwindcss -i ./app/static/css/input.css -o ./app/static/css/styles.css --minify"
   },
   "dependencies": {
+    "@tailwindcss/cli": "^4.1.17",
     "tailwindcss": "^4.1.17"
   },
   "author": "",
