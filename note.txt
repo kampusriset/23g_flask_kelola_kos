@@ -1,6 +1,10 @@
 //Untuk run tailwind
-npx tailwindcss -i ./app/static/css/input.css -o ./app/static/css/styles.css --watch
+- npm install
+- npm run dev
 
 //Untuk run app
-venv\Scripts\activate
-flask run
+- python -m venv venv
+- Path VS Code ke Python venv (.\venv\Scripts\python.exe)
+- venv\Scripts\activate
+- pip install -r requirements.txt
+- flask run

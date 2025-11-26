@@ -1,15 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="id" class="transition duration-300">
 <head>
-    <title>MyKost</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title if title else "MyKost" }}</title>
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
 </head>
-<body>
-    <nav>
-        <a href="{{ url_for('auth.login') }}">Login</a> |
-        <a href="{{ url_for('auth.register') }}">Register</a>
+
+<body class="flex min-h-screen overflow-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+
+  <!-- SIDEBAR (Desktop) -->
+  <aside class="hidden md:flex flex-col w-64 p-5
+                bg-gradient-to-br from-teal-400 via-blue-400 to-blue-600 
+                dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
+                backdrop-blur-md shadow-xl border-r border-white/30 text-white">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-3 mb-10">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-16 drop-shadow-lg">
+      <h1 class="text-xl font-bold tracking-wide">MyKost</h1>
+    </div>
+
+    <!-- Menu Desktop -->
+    <nav class="flex flex-col gap-6 text-white/90 font-semibold">
+      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
+        <i data-feather="home"></i> <span>Dashboard</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
+        <i data-feather="users"></i> <span>Penghuni</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
+        <i data-feather="credit-card"></i> <span>Pembayaran</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
+        <i data-feather="settings"></i> <span>Pengaturan</span>
+      </a>
     </nav>
-    <hr>
-    {% block content %}{% endblock %}
+
+  </aside>
+
+
+  <!-- MOBILE NAVBAR (Icon only) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50
+              bg-gradient-to-br from-teal-400 via-blue-400 to-blue-600 
+              dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
+              shadow-lg border-t border-white/30 backdrop-blur-lg px-6 py-3 flex justify-between">
+
+      <a href="#" class="flex flex-col items-center text-white hover:opacity-80 transition">
+        <i data-feather="home"></i>
+      </a>
+
+      <a href="#" class="flex flex-col items-center text-white hover:opacity-80 transition">
+        <i data-feather="users"></i>
+      </a>
+
+      <a href="#" class="flex flex-col items-center text-white hover:opacity-80 transition">
+        <i data-feather="credit-card"></i>
+      </a>
+
+      <a href="#" class="flex flex-col items-center text-white hover:opacity-80 transition">
+        <i data-feather="settings"></i>
+      </a>
+  </nav>
+
+
+  <!-- CONTENT -->
+  <main class="flex-grow p-6 md:ml-64 pb-20 md:pb-0 overflow-y-auto">
+      {% block content %}
+      {% endblock %}
+  </main>
+
+
+<script>
+  feather.replace();
+</script>
+
 </body>
 </html>
