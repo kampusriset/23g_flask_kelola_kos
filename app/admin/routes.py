@@ -1,28 +1,30 @@
-from flask import Blueprint, render_template
+from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from functools import wraps
-from flask import abort
-
-admin_bp = Blueprint('admin', __name__, template_folder='templates')
-
-# Decorator khusus Admin
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role != 'admin':
-            abort(403) # Forbidden
-        return f(*args, **kwargs)
-    return decorated_function
+from werkzeug.security import generate_password_hash
+from app import db
+from app.models import User
+from . import admin_bp
 
 @admin_bp.route('/dashboard')
 @login_required
-@admin_required
 def dashboard():
-    return render_template('admin/dashboard.html')
+    return render_template('dashboard.html')
 
-@admin_bp.route('/kamar')
+@admin_bp.route('/kamar', methods=['GET', 'POST'])
 @login_required
-@admin_required
-def kamar():
-    # Logika ambil data kamar dari DB
-    return render_template('admin/kamar.html')
+def create_penghuni():
+    if current_user.role != 'admin':
+        flash('Hanya admin yang bisa membuat akun penghuni.', 'danger')
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = generate_password_hash(request.form['password'])
+        email = request.form.get('email')
+        penghuni = User(username=username, email=email, password=password, role='penghuni')
+        db.session.add(penghuni)
+        db.session.commit()
+        flash('Akun penghuni berhasil dibuat!', 'success')
+        return redirect(url_for('admin.dashboard'))
+
+    return render_template('kamar.html')

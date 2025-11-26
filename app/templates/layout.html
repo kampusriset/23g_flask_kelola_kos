@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}MyKost{% endblock %}</title>
+    <title>MyKost</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Selamat datang di MyKost</h1>
-    </header>
-
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <nav>
+        <a href="{{ url_for('auth.login') }}">Login</a> |
+        <a href="{{ url_for('auth.register') }}">Register</a>
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
 </body>
 </html>

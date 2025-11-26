@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="p-6">
+  <h1 class="text-2xl font-bold mb-4">Dashboard Admin</h1>
+  <p>Selamat datang, {{ current_user.username }}! Anda login sebagai <strong>Admin</strong>.</p>
+
+  <ul class="mt-4 list-disc list-inside">
+    <li><a href="{{ url_for('admin.create_penghuni') }}">Buat Akun Penghuni</a></li>
+    <li><a href="#">Kelola Kamar</a></li>
+    <li><a href="#">Kelola Pembayaran</a></li>
+    <li><a href="#">Kelola Pengumuman</a></li>
+  </ul>
+</div>
+{% endblock %}
