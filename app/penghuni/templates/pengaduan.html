@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Form Pengaduan</h2>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, msg in messages %}
+        <div class="mb-3 p-3 rounded bg-green-100 text-green-800">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="post">
+    {{ form.hidden_tag() }}
+
+    <div class="mb-4">
+      {{ form.nama.label(class_='block mb-1 font-medium') }}
+      {{ form.nama(class_='w-full p-2 border rounded') }}
+    </div>
+
+    <div class="mb-4">
+      {{ form.kamar.label(class_='block mb-1 font-medium') }}
+      {{ form.kamar(class_='w-full p-2 border rounded') }}
+    </div>
+
+    <div class="mb-4">
+      {{ form.laporan.label(class_='block mb-1 font-medium') }}
+      {{ form.laporan(class_='w-full p-2 border rounded h-32') }}
+    </div>
+
+    <div>
+      {{ form.submit(class_='px-4 py-2 bg-blue-600 text-white rounded') }}
+    </div>
+  </form>
+</div>
+{% endblock %}
