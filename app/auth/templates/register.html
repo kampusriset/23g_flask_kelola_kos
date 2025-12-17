@@ -31,6 +31,20 @@
       Form ini khusus untuk Admin. Penghuni tidak perlu mendaftar sendiri.
     </p>
 
+    <!-- Pesan Flash (sukses/gagal) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for category, message in messages %}
+            <div class="p-3 rounded-xl text-sm font-semibold border
+                 {{ 'bg-red-500/20 text-red-100 border-red-500/50' if category == 'danger' else 'bg-green-500/20 text-green-100 border-green-500/50' }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <!-- FORM START -->
     <form method="POST">
       <!-- CSRF Token (Wajib ada) -->
