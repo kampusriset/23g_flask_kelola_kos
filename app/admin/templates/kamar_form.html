@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+  
+  <a href="{{ url_for('admin.kelola_kamar') }}" class="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 mb-6 transition">
+    <i data-feather="arrow-left" class="w-4 h-4"></i> Kembali ke Daftar
+  </a>
+
+  <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 p-8 md:p-10">
+    <h2 class="text-2xl font-bold mb-1 text-gray-800 dark:text-white">{{ title }}</h2>
+    <p class="text-gray-500 text-sm mb-8">Isi detail informasi kamar di bawah ini.</p>
+
+    <form method="POST">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          
+          <div>
+            <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2 ml-1">Nomor Kamar</label>
+            <input type="text" name="nomor_kamar" required
+                   value="{{ kamar.nomor_kamar if kamar else '' }}"
+                   placeholder="Contoh: A-101"
+                   class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 
+                          text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+          </div>
+
+          <div>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2 ml-1">Tipe Kamar</label>
+              <input type="text" name="tipe" 
+                     value="{{ kamar.tipe if kamar else '' }}"
+                     placeholder="Contoh: AC, Standar, VIP"
+                     class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 
+                            text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+          </div>
+
+          <div>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2 ml-1">Harga (Per Bulan)</label>
+              <div class="relative">
+                  <span class="absolute left-4 top-3.5 text-gray-400 font-semibold">Rp</span>
+                  <input type="number" name="harga" required
+                         value="{{ kamar.harga if kamar else '' }}"
+                         placeholder="0"
+                         class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 
+                                text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+              </div>
+          </div>
+
+          {% if kamar %}
+          <div>
+              <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2 ml-1">Status Penghuni</label>
+              <select name="status" class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 
+                                           text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer">
+                  <option value="kosong" {% if kamar.status == 'kosong' %}selected{% endif %}>🟢 Kosong</option>
+                  <option value="terisi" {% if kamar.status == 'terisi' %}selected{% endif %}>🔴 Terisi</option>
+              </select>
+          </div>
+          {% endif %}
+      </div>
+
+      <div class="mb-6">
+          <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2 ml-1">Fasilitas</label>
+          <textarea name="fasilitas" rows="3"
+                    placeholder="Contoh: Kasur, Lemari, Wifi, Kamar Mandi Dalam..."
+                    class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 
+                           text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition">{{ kamar.fasilitas if kamar else '' }}</textarea>
+      </div>
+
+      <div class="mb-8">
+          <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2 ml-1">Keterangan Tambahan (Opsional)</label>
+          <textarea name="keterangan" rows="2"
+                    placeholder="Catatan khusus untuk kamar ini..."
+                    class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 
+                           text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition">{{ kamar.keterangan if kamar else '' }}</textarea>
+      </div>
+
+      <div class="flex gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+          <button type="submit" 
+                  class="flex-1 bg-blue-900 dark:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg 
+                         hover:bg-blue-800 dark:hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200">
+              Simpan Data
+          </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

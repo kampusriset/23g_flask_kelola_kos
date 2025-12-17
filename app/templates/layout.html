@@ -4,91 +4,169 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ title if title else "MyKost" }}</title>
+  
   <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  
   <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body class="flex min-h-screen overflow-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
 
-  <!-- SIDEBAR (Desktop) -->
   <aside class="hidden md:flex flex-col w-64 p-5
                 bg-gradient-to-br from-teal-400 via-blue-400 to-blue-600 
                 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
                 backdrop-blur-md shadow-xl border-r border-white/30 text-white">
 
-    <!-- Logo -->
     <div class="flex items-center gap-3 mb-10">
-      <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-16 drop-shadow-lg">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-16 drop-shadow-lg" alt="Logo MyKost">
       <h1 class="text-xl font-bold tracking-wide">MyKost</h1>
     </div>
 
-    <!-- Menu Desktop -->
     <nav class="flex flex-col gap-6 text-white/90 font-semibold">
-      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
-        <i data-feather="home"></i> <span>Home</span>
-      </a>
-      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
-        <i data-feather="calendar"></i> <span>Jadwal</span>
-      </a>
-      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
-        <i data-feather="key"></i> <span>Kamar</span>
-      </a>
-      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
-        <i data-feather="credit-card"></i> <span>Pembayaran</span>
-      </a>
-      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
-        <i data-feather="archive"></i> <span>Pengaduan</span>
-      </a>
-      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
-        <i data-feather="tag"></i> <span>Pengumuman</span>
-      </a>
-      <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition">
-        <i data-feather="list"></i> <span>Peraturan</span>
-      </a>
+      
+      {% if current_user.is_authenticated %}
+        
+        {% if current_user.role == 'admin' %}
+            <div class="text-xs uppercase text-blue-100/50 font-bold tracking-wider mb-[-10px] mt-2">Menu Admin</div>
+            
+            <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="grid" class="group-hover:scale-110 transition"></i> <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('admin.kelola_kamar') }}" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="key" class="group-hover:scale-110 transition"></i> <span>Kelola Kamar</span>
+            </a>
+            <a href="{{ url_for('admin.create_penghuni') }}" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="users" class="group-hover:scale-110 transition"></i> <span>Akun Penghuni</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="dollar-sign" class="group-hover:scale-110 transition"></i> <span>Cek Pembayaran</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="tag" class="group-hover:scale-110 transition"></i> <span>Pengumuman</span>
+            </a>
 
-      <!-- Logout mengarah ke login -->
-      <a href="{{ url_for('auth.login') }}" class="flex items-center gap-3 hover:text-red-300 transition">
+        {% elif current_user.role == 'penghuni' %}
+            <div class="text-xs uppercase text-blue-100/50 font-bold tracking-wider mb-[-10px] mt-2">Menu Penghuni</div>
+            
+            <a href="{{ url_for('penghuni.index') }}" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="home" class="group-hover:scale-110 transition"></i> <span>Dashboard Saya</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="credit-card" class="group-hover:scale-110 transition"></i> <span>Tagihan Saya</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="message-circle" class="group-hover:scale-110 transition"></i> <span>Pengaduan</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 hover:text-yellow-300 transition group">
+                <i data-feather="info" class="group-hover:scale-110 transition"></i> <span>Info Kost</span>
+            </a>
+        {% endif %}
+
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="flex items-center gap-3 hover:text-yellow-300 transition">
+            <i data-feather="log-in"></i> <span>Login</span>
+        </a>
+      {% endif %}
+
+      <div class="mt-auto"></div>
+
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 hover:text-red-300 transition mt-10">
         <i data-feather="log-out"></i> <span>Logout</span>
       </a>
+      {% endif %}
     </nav>
-
   </aside>
 
 
-  <!-- MOBILE NAVBAR (Icons Only - Responsive) -->
   <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50
               bg-gradient-to-br from-teal-400 via-blue-400 to-blue-600 
-              shadow-lg border-t border-white/20 backdrop-blur-lg px-6 py-3 
-              flex justify-between">
+              dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
+              shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] border-t border-white/20 backdrop-blur-lg px-6 py-3 
+              flex justify-between items-center text-white">
 
-      <a href="#" class="flex flex-col items-center text-white hover:opacity-75 transition">
-        <i data-feather="home" class="w-6 h-6"></i>
-      </a>
+      {% if current_user.is_authenticated %}
+          
+          {% if current_user.role == 'admin' %}
+              <a href="{{ url_for('admin.dashboard') }}" class="flex flex-col items-center hover:text-yellow-300 transition gap-1">
+                  <i data-feather="grid" class="w-6 h-6"></i>
+                  <span class="text-[10px] font-medium">Dash</span>
+              </a>
+              
+              <a href="{{ url_for('admin.kelola_kamar') }}" class="flex flex-col items-center hover:text-yellow-300 transition gap-1">
+                  <i data-feather="key" class="w-6 h-6"></i>
+                  <span class="text-[10px] font-medium">Kamar</span>
+              </a>
 
-      <a href="#" class="flex flex-col items-center text-white hover:opacity-75 transition">
-        <i data-feather="calendar" class="w-6 h-6"></i>
-      </a>
+              <a href="{{ url_for('admin.create_penghuni') }}" class="flex flex-col items-center hover:text-yellow-300 transition gap-1">
+                  <i data-feather="users" class="w-6 h-6"></i>
+                  <span class="text-[10px] font-medium">Akun</span>
+              </a>
+              
+              <a href="#" class="flex flex-col items-center hover:text-yellow-300 transition gap-1">
+                  <i data-feather="dollar-sign" class="w-6 h-6"></i>
+                  <span class="text-[10px] font-medium">Bayar</span>
+              </a>
 
-      <a href="#" class="flex flex-col items-center text-white hover:opacity-75 transition">
-        <i data-feather="credit-card" class="w-6 h-6"></i>
-      </a>
+          {% elif current_user.role == 'penghuni' %}
+              <a href="{{ url_for('penghuni.index') }}" class="flex flex-col items-center hover:text-yellow-300 transition gap-1">
+                  <i data-feather="home" class="w-6 h-6"></i>
+                  <span class="text-[10px] font-medium">Home</span>
+              </a>
 
-      <!-- Logout button MOBILE -->
-      <a href="{{ url_for('auth.login') }}" class="flex flex-col items-center text-white hover:opacity-75 transition">
-        <i data-feather="log-out" class="w-6 h-6"></i>
-      </a>
+              <a href="#" class="flex flex-col items-center hover:text-yellow-300 transition gap-1">
+                  <i data-feather="credit-card" class="w-6 h-6"></i>
+                  <span class="text-[10px] font-medium">Tagihan</span>
+              </a>
+
+              <a href="#" class="flex flex-col items-center hover:text-yellow-300 transition gap-1">
+                  <i data-feather="message-circle" class="w-6 h-6"></i>
+                  <span class="text-[10px] font-medium">Lapor</span>
+              </a>
+          {% endif %}
+
+          <a href="{{ url_for('auth.logout') }}" class="flex flex-col items-center text-red-100 hover:text-red-400 transition gap-1">
+              <i data-feather="log-out" class="w-6 h-6"></i>
+              <span class="text-[10px] font-medium">Keluar</span>
+          </a>
+
+      {% else %}
+          <a href="{{ url_for('auth.login') }}" class="w-full flex justify-center items-center gap-2 hover:text-yellow-300 transition">
+              <i data-feather="log-in" class="w-6 h-6"></i>
+              <span class="font-bold">Login Masuk</span>
+          </a>
+      {% endif %}
   </nav>
 
 
-  <!-- CONTENT -->
-  <main class="flex-grow p-6 md:ml-64 pb-20 md:pb-0 overflow-y-auto">
+ <main class="flex-grow p-6 md:ml-64 pb-24 md:pb-6 overflow-y-auto w-full">
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="mb-6 space-y-2">
+            {% for category, message in messages %}
+            <div class="flex items-center gap-3 p-4 rounded-xl border shadow-sm transition-all
+                 {{ 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800' 
+                    if category == 'danger' 
+                    else 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' 
+                 }}">
+              
+              <i data-feather="{{ 'alert-circle' if category == 'danger' else 'check-circle' }}" class="w-5 h-5"></i>
+              
+              <span class="font-medium text-sm">{{ message }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
       {% block content %}
       {% endblock %}
+      
   </main>
 
-<script>
-  feather.replace();
-</script>
+  <script>
+    feather.replace();
+  </script>
 
 </body>
 </html>

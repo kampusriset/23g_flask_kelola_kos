@@ -5,8 +5,9 @@
   <p>Selamat datang, {{ current_user.username }}! Anda login sebagai <strong>Admin</strong>.</p>
 
   <ul class="mt-4 list-disc list-inside">
-    <li><a href="{{ url_for('admin.create_penghuni') }}">Buat Akun Penghuni</a></li>
-    <li><a href="#">Kelola Kamar</a></li>
+    <li><a href="{{ url_for('admin.kelola_kamar') }}" class="text-blue-600 hover:underline">Kelola Kamar</a></li>
+    
+    <li><a href="{{ url_for('admin.create_penghuni') }}" class="text-blue-600 hover:underline">Buat Akun Penghuni</a></li>
     <li><a href="#">Kelola Pembayaran</a></li>
     <li><a href="#">Kelola Pengumuman</a></li>
   </ul>
