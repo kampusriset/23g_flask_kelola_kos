@@ -46,7 +46,7 @@ def peraturan():
             flash('Peraturan berhasil ditambahkan!', 'success')
             return redirect(url_for('admin.peraturan'))
         else:
-            flash('Isi peraturan tidak boleh kosong.', 'danger')
+            flash('Isi peraturan tidak boleh kosong, harus diisi!.', 'danger')
 
     semua_peraturan = Peraturan.query.all()
     return render_template('peraturan.html', semua_peraturan=semua_peraturan)
