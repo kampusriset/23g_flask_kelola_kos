@@ -30,22 +30,32 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         # cek apakah username sudah ada
-        existing_user = User.query.filter_by(username=form.username.data).first()
-        if existing_user:
+        existing_user_username = User.query.filter_by(username=form.username.data).first()
+        if existing_user_username:
             flash('Username sudah digunakan.', 'danger')
             return render_template('register.html', form=form)
 
-        hashed_pw = generate_password_hash(form.password.data)
-        new_admin = User(
-            username=form.username.data,
-            email=form.email.data,
-            password=hashed_pw,
-            role='admin'   # <--- penting: set role admin
-        )
-        db.session.add(new_admin)
-        db.session.commit()
-        flash('Registrasi Admin berhasil, silakan login.', 'success')
-        return redirect(url_for('auth.login'))
+        # cek apakah email sudah ada
+        existing_user_email = User.query.filter_by(email=form.email.data).first()
+        if existing_user_email:
+            flash('Email sudah terdaftar.', 'danger')
+            return render_template('register.html', form=form)
+
+        try:
+            hashed_pw = generate_password_hash(form.password.data)
+            new_admin = User(
+                username=form.username.data,
+                email=form.email.data,
+                password=hashed_pw,
+                role='admin'   # penting: set role admin
+            )
+            db.session.add(new_admin)
+            db.session.commit()
+            flash('Registrasi Admin berhasil, silakan login.', 'success')
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Terjadi kesalahan saat menyimpan ke database. Coba lagi atau hubungi admin.', 'danger')
 
     return render_template('register.html', form=form)
 
