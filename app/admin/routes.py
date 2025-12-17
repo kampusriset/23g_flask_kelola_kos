@@ -1,8 +1,9 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import app, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from app import db
 from app.models import User
+from app.models import User, Peraturan
 from . import admin_bp
 
 @admin_bp.route('/dashboard')
@@ -28,3 +29,33 @@ def create_penghuni():
         return redirect(url_for('admin.dashboard'))
 
     return render_template('kamar.html')
+
+@admin_bp.route('/peraturan', methods=['GET', 'POST'])
+@login_required
+def peraturan():
+    if current_user.role != 'admin':
+        flash('Hanya admin yang bisa menambahkan peraturan.', 'danger')
+        return redirect(url_for('admin.dashboard'))
+
+    if request.method == 'POST':
+        isi = request.form['isi']
+        if isi.strip():
+            peraturan_baru = Peraturan(isi=isi)
+            db.session.add(peraturan_baru)
+            db.session.commit()
+            flash('Peraturan berhasil ditambahkan!', 'success')
+            return redirect(url_for('admin.peraturan'))
+        else:
+            flash('Isi peraturan tidak boleh kosong, harus diisi!.', 'danger')
+
+    semua_peraturan = Peraturan.query.all()
+    return render_template('peraturan.html', semua_peraturan=semua_peraturan)
+
+@admin_bp.route('/hapus_peraturan/<int:id>', methods=['POST'])
+@login_required
+def hapus_peraturan(id):
+    peraturan = Peraturan.query.get_or_404(id)
+    db.session.delete(peraturan)
+    db.session.commit()
+    flash('Peraturan berhasil dihapus.', 'success')
+    return redirect(url_for('admin.peraturan'))
