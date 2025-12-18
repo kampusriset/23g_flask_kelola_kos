@@ -3,41 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyKost — Register Admin</title>
+  <title>Register Admin - MyKost</title>
+  
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/logo.svg') }}">
 
-  <!-- Tailwind -->
   <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+
+  <script>
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  </script>
 </head>
 
-<body class="min-h-screen flex items-center justify-center 
-             bg-gradient-to-br from-teal-400 via-blue-400 to-blue-600
-             dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
-             transition py-10">
+<body class="min-h-screen flex items-center justify-center px-4 py-10 transition-colors duration-300
+             bg-gray-50 text-gray-800 
+             dark:bg-gray-900 dark:text-gray-100">
 
-  <!-- CARD -->
-  <div class="backdrop-blur-xl bg-white/20 dark:bg-white/5 
-              p-10 rounded-3xl shadow-xl w-full max-w-sm border border-white/30">
+  <div class="w-full max-w-md bg-white dark:bg-gray-800 
+              rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 
+              p-8 md:p-10 transition-colors duration-300">
 
-    <!-- LOGO -->
-    <div class="flex justify-center mb-4">
-      <!-- Menggunakan url_for agar path gambar dinamis dan benar -->
-      <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-32 drop-shadow-lg">
+    <div class="flex flex-col items-center mb-6">
+      <img src="{{ url_for('static', filename='img/logo.svg') }}" class="w-16 h-16 mb-4">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white text-center">
+        Daftar Admin Baru
+      </h2>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-2 text-center leading-relaxed">
+        Form ini khusus untuk Admin Pengelola.<br>
+        <span class="text-xs text-red-500 dark:text-red-400">*Penghuni kos tidak perlu mendaftar sendiri.</span>
+      </p>
     </div>
 
-    <h2 class="text-2xl font-bold text-center text-white dark:text-teal-200 mb-2">
-      Pendaftaran Admin Kos
-    </h2>
-    <p class="text-white/80 dark:text-gray-300 text-center text-sm mb-6">
-      Form ini khusus untuk Admin. Penghuni tidak perlu mendaftar sendiri.
-    </p>
-
-    <!-- Pesan Flash (sukses/gagal) -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <div class="mb-4">
+        <div class="mb-6 space-y-3">
           {% for category, message in messages %}
-            <div class="p-3 rounded-xl text-sm font-semibold border
-                 {{ 'bg-red-500/20 text-red-100 border-red-500/50' if category == 'danger' else 'bg-green-500/20 text-green-100 border-green-500/50' }}">
+            <div class="p-3 rounded-xl text-sm font-medium border flex items-center gap-2
+                 {{ 'bg-red-50 text-red-600 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' if category == 'danger' else 'bg-green-50 text-green-600 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' }}">
+              <span class="w-2 h-2 rounded-full {{ 'bg-red-500' if category == 'danger' else 'bg-green-500' }}"></span>
               {{ message }}
             </div>
           {% endfor %}
@@ -45,83 +51,69 @@
       {% endif %}
     {% endwith %}
 
-    <!-- FORM START -->
-    <form method="POST">
-      <!-- CSRF Token (Wajib ada) -->
+    <form method="POST" class="space-y-4">
       {{ form.hidden_tag() }}
 
-      <!-- Username -->
-      <div class="mb-4">
-        {{ form.username.label(class="text-white dark:text-gray-200 font-medium text-sm") }}
-        {{ form.username(class="w-full mt-1 px-3 py-2 rounded-xl 
-                                bg-white/90 dark:bg-gray-700 dark:text-white 
-                                border border-white/40
-                                focus:ring-2 focus:ring-teal-300 outline-none", 
-                                placeholder="Username untuk login") }}
-        <!-- Menampilkan Error jika ada -->
+      <div>
+        {{ form.username.label(class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1") }}
+        {{ form.username(class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 
+                                bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white
+                                focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition
+                                placeholder-gray-400 dark:placeholder-gray-500", 
+                                placeholder="Buat username unik") }}
         {% for error in form.username.errors %}
-          <span class="text-red-200 text-xs font-bold block mt-1 bg-red-500/20 p-1 rounded">{{ error }}</span>
+           <p class="text-red-500 text-xs mt-1 font-medium">{{ error }}</p>
         {% endfor %}
       </div>
 
-      <!-- Email -->
-      <div class="mb-4">
-        {{ form.email.label(class="text-white dark:text-gray-200 font-medium text-sm") }}
-        {{ form.email(class="w-full mt-1 px-3 py-2 rounded-xl 
-                             bg-white/90 dark:bg-gray-700 dark:text-white 
-                             border border-white/40
-                             focus:ring-2 focus:ring-teal-300 outline-none", 
-                             placeholder="email@contoh.com") }}
+      <div>
+        {{ form.email.label(class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1") }}
+        {{ form.email(class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 
+                              bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white
+                              focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition
+                              placeholder-gray-400 dark:placeholder-gray-500", 
+                              placeholder="admin@mykost.com") }}
         {% for error in form.email.errors %}
-          <span class="text-red-200 text-xs font-bold block mt-1 bg-red-500/20 p-1 rounded">{{ error }}</span>
+           <p class="text-red-500 text-xs mt-1 font-medium">{{ error }}</p>
         {% endfor %}
       </div>
 
-      <!-- Password -->
-      <div class="mb-4">
-        {{ form.password.label(class="text-white dark:text-gray-200 font-medium text-sm") }}
-        {{ form.password(class="w-full mt-1 px-3 py-2 rounded-xl
-                                bg-white/90 dark:bg-gray-700 dark:text-white 
-                                border border-white/40
-                                focus:ring-2 focus:ring-teal-300 outline-none", 
+      <div>
+        {{ form.password.label(class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1") }}
+        {{ form.password(class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 
+                                bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white
+                                focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition
+                                placeholder-gray-400 dark:placeholder-gray-500", 
                                 placeholder="Minimal 6 karakter") }}
         {% for error in form.password.errors %}
-          <span class="text-red-200 text-xs font-bold block mt-1 bg-red-500/20 p-1 rounded">{{ error }}</span>
+           <p class="text-red-500 text-xs mt-1 font-medium">{{ error }}</p>
         {% endfor %}
       </div>
 
-      <!-- Konfirmasi Password (WAJIB DIISI) -->
-      <div class="mb-6">
-        {{ form.confirm_password.label(class="text-white dark:text-gray-200 font-medium text-sm") }}
-        {{ form.confirm_password(class="w-full mt-1 px-3 py-2 rounded-xl
-                                        bg-white/90 dark:bg-gray-700 dark:text-white 
-                                        border border-white/40
-                                        focus:ring-2 focus:ring-teal-300 outline-none", 
-                                        placeholder="Ulangi password") }}
+      <div>
+        {{ form.confirm_password.label(class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1") }}
+        {{ form.confirm_password(class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 
+                                        bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white
+                                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition
+                                        placeholder-gray-400 dark:placeholder-gray-500", 
+                                        placeholder="Ketik ulang password") }}
         {% for error in form.confirm_password.errors %}
-          <span class="text-red-200 text-xs font-bold block mt-1 bg-red-500/20 p-1 rounded">{{ error }}</span>
+           <p class="text-red-500 text-xs mt-1 font-medium">{{ error }}</p>
         {% endfor %}
       </div>
 
-      <!-- Button -->
-      {{ form.submit(class="w-full py-2 bg-blue-900 dark:bg-blue-700 
-                            text-white rounded-xl font-semibold cursor-pointer
-                            hover:bg-blue-800 dark:hover:bg-blue-600 
-                            active:scale-95 transition-all duration-150 shadow-lg") }}
+      <div class="pt-2">
+        {{ form.submit(class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md 
+                             transform active:scale-95 transition-all duration-200 cursor-pointer") }}
+      </div>
       
-      <p class="text-white/70 dark:text-gray-400 mt-4 text-center text-xs italic">
-        Setelah mendaftar, Anda dapat login dan mulai mengelola data penghuni.
-      </p>
-
     </form>
-    <!-- FORM END -->
 
-    <!-- Login Link -->
-    <div class="mt-5 text-center text-sm">
-        <p class="text-white/90 dark:text-gray-300">
-            Sudah punya akun admin?
-            <a href="{{ url_for('auth.login') }}" class="underline font-semibold text-white hover:text-teal-200 transition">
-                Login di sini
+    <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+            Sudah punya akun admin? 
+            <a href="{{ url_for('auth.login') }}" class="font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 hover:underline transition">
+            Login di sini
             </a>
         </p>
     </div>
