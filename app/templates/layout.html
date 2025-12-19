@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,6 +26,10 @@
 
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 font-sans antialiased overflow-hidden transition-colors duration-300">
 
+  {% set nav_active = "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" %}
+  
+  {% set nav_inactive = "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white" %}
+
   <div class="flex h-screen w-full">
 
     <aside class="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full transition-colors duration-300">
@@ -36,27 +40,38 @@
       </div>
 
       <nav class="flex-1 overflow-y-auto px-4 space-y-1 mt-2 no-scrollbar">
-        <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl font-medium transition">
+        
+        <a href="{{ url_for('admin.dashboard')}}" 
+           class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.dashboard' else nav_inactive }}">
           <i data-feather="home" class="w-5 h-5"></i> <span>Home</span>
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
+
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.jadwal' else nav_inactive }}">
           <i data-feather="calendar" class="w-5 h-5"></i> <span>Jadwal</span>
         </a>
-        <a href="{{ url_for('admin.create_penghuni') }}" class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
+
+        <a href="{{ url_for('admin.create_penghuni') }}" 
+           class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.create_penghuni' else nav_inactive }}">
           <i data-feather="key" class="w-5 h-5"></i> <span>Kamar</span>
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
+
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pembayaran' else nav_inactive }}">
           <i data-feather="credit-card" class="w-5 h-5"></i> <span>Pembayaran</span>
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
+
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengaduan' else nav_inactive }}">
           <i data-feather="archive" class="w-5 h-5"></i> <span>Pengaduan</span>
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
+
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
           <i data-feather="tag" class="w-5 h-5"></i> <span>Pengumuman</span>
         </a>
-        <a href="{{ url_for('admin.peraturan') }}" class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
+
+        <a href="{{ url_for('admin.peraturan') }}" 
+           class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.peraturan' else nav_inactive }}">
           <i data-feather="list" class="w-5 h-5"></i> <span>Peraturan</span>
         </a>
+
       </nav>
 
       <div class="p-4 border-t border-gray-100 dark:border-gray-700 space-y-1">
@@ -104,17 +119,20 @@
 
 
   <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-around items-center py-3 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300">
-      <a href="#" class="flex flex-col items-center gap-1 text-blue-600 dark:text-blue-400">
+      <a href="{{ url_for('admin.dashboard') }}" 
+         class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'admin.dashboard' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
         <i data-feather="home" class="w-6 h-6"></i>
         <span class="text-[10px] font-medium">Home</span>
       </a>
-      <a href="#" class="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition">
-        <i data-feather="credit-card" class="w-6 h-6"></i>
-        <span class="text-[10px] font-medium">Bayar</span>
+      <a href="{{ url_for('admin.create_penghuni') }}" 
+         class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'admin.create_penghuni' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
+        <i data-feather="key" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium">Kamar</span>
       </a>
-      <a href="#" class="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition">
-        <i data-feather="archive" class="w-6 h-6"></i>
-        <span class="text-[10px] font-medium">Lapor</span>
+      <a href="{{ url_for('admin.peraturan') }}" 
+         class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'admin.peraturan' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
+        <i data-feather="list" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium">Aturan</span>
       </a>
       <button onclick="toggleDrawer()" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-800 dark:hover:text-white transition focus:outline-none">
         <i data-feather="menu" class="w-6 h-6"></i>
@@ -133,16 +151,16 @@
       <div class="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">Fitur Utama</p>
           
-          <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-200 font-medium transition">
+          <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.jadwal' else nav_inactive }}">
              <i data-feather="calendar" class="w-4 h-4"></i> Jadwal
           </a>
-          <a href="{{ url_for('admin.create_penghuni') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-200 font-medium transition">
+          <a href="{{ url_for('admin.create_penghuni') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.create_penghuni' else nav_inactive }}">
              <i data-feather="key" class="w-4 h-4"></i> Kamar
           </a>
-          <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-200 font-medium transition">
+          <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
              <i data-feather="tag" class="w-4 h-4"></i> Pengumuman
           </a>
-          <a href="{{ url_for('admin.peraturan') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-200 font-medium transition">
+          <a href="{{ url_for('admin.peraturan') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.peraturan' else nav_inactive }}">
              <i data-feather="list" class="w-4 h-4"></i> Peraturan
           </a>
           
@@ -156,10 +174,8 @@
   </div>
 
   <script>
-    // 1. Render Ikon dulu (Ubah <i> jadi <svg>)
     feather.replace();
 
-    // 2. Logic Drawer
     function toggleDrawer() {
         const overlay = document.getElementById('drawer-overlay');
         const menu = document.getElementById('drawer-menu');
@@ -176,27 +192,20 @@
         }
     }
 
-    // 3. Logic Dark Mode (FIXED)
     const themeToggleBtn = document.getElementById('theme-toggle');
     const iconMoon = document.getElementById('theme-icon-moon');
     const iconSun = document.getElementById('theme-icon-sun');
 
-    // Fungsi update ikon agar sinkron dengan state
     function updateIcons() {
         if (document.documentElement.classList.contains('dark')) {
-            // Jika Dark Mode: Tampilkan Bulan (Status), Sembunyikan Matahari
-            // Atau jika ingin tombol "Switch to Light", tampilkan Matahari. 
-            // Disini saya set: Tampilkan icon MATAHARI saat gelap (biar user klik matahari utk jadi terang)
             iconMoon.classList.add('hidden');
             iconSun.classList.remove('hidden');
         } else {
-            // Jika Light Mode: Tampilkan Bulan (biar user klik bulan utk jadi gelap)
             iconMoon.classList.remove('hidden');
             iconSun.classList.add('hidden');
         }
     }
 
-    // Jalankan sekali saat load
     updateIcons();
 
     themeToggleBtn.addEventListener('click', function() {
