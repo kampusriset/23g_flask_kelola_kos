@@ -63,7 +63,7 @@
           <i data-feather="archive" class="w-5 h-5"></i> <span>Pengaduan</span>
         </a>
 
-        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
+        <a href="{{ url_for('admin.pengumuman') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
           <i data-feather="tag" class="w-5 h-5"></i> <span>Pengumuman</span>
         </a>
 
@@ -133,6 +133,11 @@
          class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'admin.peraturan' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
         <i data-feather="list" class="w-6 h-6"></i>
         <span class="text-[10px] font-medium">Aturan</span>
+      </a>
+      <a href="{{ url_for('admin.pengumuman') }}" 
+         class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'admin.pengumuman' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
+        <i data-feather="list" class="w-6 h-6"></i>
+        <span class="text-[10px] font-medium">Pengumuman</span>
       </a>
       <button onclick="toggleDrawer()" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-800 dark:hover:text-white transition focus:outline-none">
         <i data-feather="menu" class="w-6 h-6"></i>
