@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash
 from app import db
 from app.models import User
 from app.models import User, Peraturan
+from app.models import Pengumuman
 from . import admin_bp
 
 @admin_bp.route('/dashboard')
@@ -29,6 +30,9 @@ def create_penghuni():
         return redirect(url_for('admin.dashboard'))
 
     return render_template('kamar.html')
+
+
+
 
 @admin_bp.route('/peraturan', methods=['GET', 'POST'])
 @login_required
@@ -59,3 +63,59 @@ def hapus_peraturan(id):
     db.session.commit()
     flash('Peraturan berhasil dihapus.', 'success')
     return redirect(url_for('admin.peraturan'))
+
+
+
+
+@admin_bp.route('/pengumuman', methods=['GET', 'POST'])
+@login_required
+def pengumuman():
+    if current_user.role != 'admin':
+        flash('Hanya admin yang bisa menambahkan pengumuman.', 'danger')
+        return redirect(url_for('admin.dashboard'))
+
+    if request.method == 'POST':
+        judul = request.form['judul']
+        isi = request.form['isi']
+        if judul.strip() and isi.strip():
+            pengumuman_baru = Pengumuman(
+                judul=judul,
+                isi=isi,
+                dibuat_oleh=current_user.id   # isi otomatis dengan id user yang login
+            )
+            db.session.add(pengumuman_baru)
+            db.session.commit()
+            flash('Pengumuman berhasil ditambahkan!', 'success')
+            return redirect(url_for('admin.pengumuman'))
+        else:
+            flash('Judul dan isi pengumuman tidak boleh kosong.', 'danger')
+
+    semua_pengumuman = Pengumuman.query.order_by(Pengumuman.tanggal.desc()).all()
+    return render_template('pengumuman.html', semua_pengumuman=semua_pengumuman)
+
+
+# ✅ Route Edit Pengumuman
+@admin_bp.route('/edit_pengumuman/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_pengumuman(id):
+    pengumuman = Pengumuman.query.get_or_404(id)
+
+    if request.method == 'POST':
+        pengumuman.judul = request.form['judul']
+        pengumuman.isi = request.form['isi']
+        db.session.commit()
+        flash('Pengumuman berhasil diperbarui!', 'success')
+        return redirect(url_for('admin.pengumuman'))
+
+    return render_template('edit_pengumuman.html', pengumuman=pengumuman)
+
+
+# ✅ Route Hapus Pengumuman
+@admin_bp.route('/hapus_pengumuman/<int:id>', methods=['POST'])
+@login_required
+def hapus_pengumuman(id):
+    pengumuman = Pengumuman.query.get_or_404(id)
+    db.session.delete(pengumuman)
+    db.session.commit()
+    flash('Pengumuman berhasil dihapus.', 'success')
+    return redirect(url_for('admin.pengumuman'))

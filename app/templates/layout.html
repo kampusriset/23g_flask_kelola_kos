@@ -157,7 +157,7 @@
           <a href="{{ url_for('admin.create_penghuni') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.create_penghuni' else nav_inactive }}">
              <i data-feather="key" class="w-4 h-4"></i> Kamar
           </a>
-          <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
+          <a href="{{ url_for('admin.pengumuman') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
              <i data-feather="tag" class="w-4 h-4"></i> Pengumuman
           </a>
           <a href="{{ url_for('admin.peraturan') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.peraturan' else nav_inactive }}">
