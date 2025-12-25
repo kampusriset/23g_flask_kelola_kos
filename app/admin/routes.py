@@ -6,6 +6,8 @@ from app.models import User
 from app.models import User, Peraturan
 from app.models import Pengumuman
 from . import admin_bp
+from .forms import PenghuniForm, PeraturanForm, PengumumanForm
+
 
 @admin_bp.route('/dashboard')
 @login_required
@@ -19,17 +21,22 @@ def create_penghuni():
         flash('Hanya admin yang bisa membuat akun penghuni.', 'danger')
         return redirect(url_for('auth.login'))
 
-    if request.method == 'POST':
-        username = request.form['username']
-        password = generate_password_hash(request.form['password'])
-        email = request.form.get('email')
-        penghuni = User(username=username, email=email, password=password, role='penghuni')
+    form = PenghuniForm()
+
+    if form.validate_on_submit():
+        password = generate_password_hash(form.password.data)
+        penghuni = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=password,
+            role='penghuni'
+        )
         db.session.add(penghuni)
         db.session.commit()
         flash('Akun penghuni berhasil dibuat!', 'success')
         return redirect(url_for('admin.dashboard'))
 
-    return render_template('kamar.html')
+    return render_template('kamar.html', form=form)
 
 
 
@@ -41,19 +48,24 @@ def peraturan():
         flash('Hanya admin yang bisa menambahkan peraturan.', 'danger')
         return redirect(url_for('admin.dashboard'))
 
-    if request.method == 'POST':
-        isi = request.form['isi']
-        if isi.strip():
-            peraturan_baru = Peraturan(isi=isi)
-            db.session.add(peraturan_baru)
-            db.session.commit()
-            flash('Peraturan berhasil ditambahkan!', 'success')
-            return redirect(url_for('admin.peraturan'))
-        else:
-            flash('Isi peraturan tidak boleh kosong, harus diisi!.', 'danger')
+    form = PeraturanForm()
+
+    if form.validate_on_submit():
+        peraturan_baru = Peraturan(isi=form.isi.data)
+        db.session.add(peraturan_baru)
+        db.session.commit()
+        flash('Peraturan berhasil ditambahkan!', 'success')
+        return redirect(url_for('admin.peraturan'))
 
     semua_peraturan = Peraturan.query.all()
-    return render_template('peraturan.html', semua_peraturan=semua_peraturan)
+    return render_template(
+        'peraturan.html',
+        form=form,
+        semua_peraturan=semua_peraturan
+    )
+
+
+
 
 @admin_bp.route('/hapus_peraturan/<int:id>', methods=['POST'])
 @login_required
@@ -74,40 +86,49 @@ def pengumuman():
         flash('Hanya admin yang bisa menambahkan pengumuman.', 'danger')
         return redirect(url_for('admin.dashboard'))
 
-    if request.method == 'POST':
-        judul = request.form['judul']
-        isi = request.form['isi']
-        if judul.strip() and isi.strip():
-            pengumuman_baru = Pengumuman(
-                judul=judul,
-                isi=isi,
-                dibuat_oleh=current_user.id   # isi otomatis dengan id user yang login
-            )
-            db.session.add(pengumuman_baru)
-            db.session.commit()
-            flash('Pengumuman berhasil ditambahkan!', 'success')
-            return redirect(url_for('admin.pengumuman'))
-        else:
-            flash('Judul dan isi pengumuman tidak boleh kosong.', 'danger')
+    form = PengumumanForm()
+
+    if form.validate_on_submit():
+        pengumuman_baru = Pengumuman(
+            judul=form.judul.data,
+            isi=form.isi.data,
+            dibuat_oleh=current_user.id
+        )
+        db.session.add(pengumuman_baru)
+        db.session.commit()
+        flash('Pengumuman berhasil ditambahkan!', 'success')
+        return redirect(url_for('admin.pengumuman'))
 
     semua_pengumuman = Pengumuman.query.order_by(Pengumuman.tanggal.desc()).all()
-    return render_template('pengumuman.html', semua_pengumuman=semua_pengumuman)
+    return render_template(
+        'pengumuman.html',
+        form=form,
+        semua_pengumuman=semua_pengumuman
+    )
 
 
-# ✅ Route Edit Pengumuman
+
+
 @admin_bp.route('/edit_pengumuman/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_pengumuman(id):
     pengumuman = Pengumuman.query.get_or_404(id)
+    form = PengumumanForm(obj=pengumuman)
 
-    if request.method == 'POST':
-        pengumuman.judul = request.form['judul']
-        pengumuman.isi = request.form['isi']
+    if form.validate_on_submit():
+        pengumuman.judul = form.judul.data
+        pengumuman.isi = form.isi.data
         db.session.commit()
         flash('Pengumuman berhasil diperbarui!', 'success')
         return redirect(url_for('admin.pengumuman'))
 
-    return render_template('edit_pengumuman.html', pengumuman=pengumuman)
+    return render_template(
+        'edit_pengumuman.html',
+        form=form,
+        pengumuman=pengumuman
+    )
+
+
 
 
 # ✅ Route Hapus Pengumuman

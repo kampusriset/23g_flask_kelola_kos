@@ -30,27 +30,34 @@
 
     <!-- ✅ Form Tambah Pengumuman -->
     <form method="POST" action="{{ url_for('admin.pengumuman') }}" class="space-y-4">
+      {{ form.hidden_tag() }}
     
       <div>
-        <label for="judul" class="block font-semibold mb-1 text-gray-300">Judul Pengumuman</label>
-        <input type="text" name="judul" id="judul"
-               class="w-full border border-gray-700 bg-gray-800 text-gray-200 rounded-lg p-3
-                      focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-               placeholder="Judul pengumuman...">
+        {{ form.judul.label(class="block font-semibold mb-1 text-gray-300") }}
+        
+        {{ form.judul(class="w-full border border-gray-700 bg-gray-800 text-gray-200 rounded-lg p-3
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 transition", placeholder="Judul pengumuman...") }}
       </div>
 
+      {% if form.judul.errors %}
+        <p class="text-red-400 text-sm mt-1">
+          {{ form.judul.errors[0] }}
+        </p>
+      {% endif %}
       <div>
-        <label for="isi" class="block font-semibold mb-1 text-gray-300">Isi Pengumuman</label>
-        <textarea name="isi" id="isi" rows="3"
-                  class="w-full border border-gray-700 bg-gray-800 text-gray-200 rounded-lg p-3
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                  placeholder="Tulis isi pengumuman..."></textarea>
+        {{  form.isi.label(class="block font-semibold mb-1 text-gray-300") }}
+
+        {{ form.isi(rows=3, class="w-full border border-gray-700 bg-gray-800 text-gray-200 rounded-lg p-3
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 transition", placeholder="Tulis isi pengumuman...") }}
       </div>
 
-      <button type="submit"
-        class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 font-semibold border border-green-700">
-        Tambah Pengumuman
-      </button>
+      {% if form.isi.errors %}
+        <p class="text-red-400 text-sm mt-1">
+          {{ form.isi.errors[0] }}
+        </p>
+      {% endif %}
+
+      {{ form.submit(class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 font-semibold border border-green-700") }}
     </form>
 
     <!-- ✅ Daftar Pengumuman -->
