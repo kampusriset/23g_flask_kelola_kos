@@ -17,3 +17,14 @@ class Peraturan(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     isi = db.Column(db.Text, nullable=False)
 
+class Pengumuman(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    judul = db.Column(db.String(200), nullable=False)
+    isi = db.Column(db.Text, nullable=False)
+    tanggal = db.Column(db.DateTime, default=db.func.current_timestamp())
+    dibuat_oleh = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Relasi ke User (opsional, biar bisa akses nama pembuat)
+    pembuat = db.relationship('User', backref='pengumuman')
+
+
