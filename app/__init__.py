@@ -36,6 +36,10 @@ def create_app():
     @app.errorhandler(403)
     def forbidden_error(error):
         return render_template('403.html'), 403
+    
+    @app.errorhandler(404)
+    def forbidden_error(error):
+        return render_template('403.html'), 404
 
     # Route utama
     @app.route('/')
