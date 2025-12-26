@@ -14,7 +14,7 @@ def cek_halaman_error():
     abort(403)
     
 @admin_bp.route('/test-404')
-def cek_halaman_error():
+def cek_halaman_tidak_ditemukan():
     abort(404)
     
 @admin_bp.route('/dashboard')
