@@ -35,8 +35,10 @@
     <aside class="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full transition-colors duration-300">
       
       <div class="p-6 flex items-center gap-3 mb-2">
-        <img src="{{ url_for('static', filename='img/logo.svg') }}" class="w-10 h-10 object-contain">
-        <h1 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight">MyKost</h1>
+        <a href="{{ url_for('admin.dashboard')}}" class="flex items-center gap-3">
+          <img src="{{ url_for('static', filename='img/logo.svg') }}" class="w-9 h-9 object-contain">
+          <h1 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight">MyKost</h1>
+        </a>
       </div>
 
       <nav class="flex-1 overflow-y-auto px-4 space-y-1 mt-2 no-scrollbar">
@@ -89,7 +91,7 @@
         
         <header class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md md:bg-white md:dark:bg-gray-800 p-4 md:px-8 md:py-6 flex justify-between items-center sticky top-0 z-20 transition-colors duration-300 shadow-sm dark:shadow-none dark:border-b dark:border-gray-700">
             <div>
-                <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">Halo, Penghuni! 👋</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">Halo, Penghuni!</h2>
             </div>
             
             <div class="flex items-center gap-3">
@@ -149,7 +151,10 @@
   
   <div id="drawer-menu" class="fixed top-0 right-0 w-72 h-full bg-white dark:bg-gray-800 z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col border-l dark:border-gray-700">
       <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800">
-          <span class="font-bold text-lg text-gray-800 dark:text-white">Menu Lengkap</span>
+          <a href="{{ url_for('admin.dashboard')}}" class="flex items-center gap-3">
+            <img src="{{ url_for('static', filename='img/logo.svg') }}" class="w-9 h-9 object-contain">
+            <h1 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight">MyKost</h1>
+          </a>
           <button onclick="toggleDrawer()" class="text-gray-500 dark:text-gray-400 hover:text-red-500"><i data-feather="x"></i></button>
       </div>
       
