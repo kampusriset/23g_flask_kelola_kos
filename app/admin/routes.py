@@ -1,4 +1,4 @@
-from flask import app, render_template, request, redirect, url_for, flash
+from flask import app, render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from app import db
@@ -8,7 +8,15 @@ from app.models import Pengumuman
 from . import admin_bp
 from .forms import PenghuniForm, PeraturanForm, PengumumanForm
 
-
+# === ROUTE UNTUK TEST ===
+@admin_bp.route('/test-403')
+def cek_halaman_error():
+    abort(403)
+    
+@admin_bp.route('/test-404')
+def cek_halaman_error():
+    abort(404)
+    
 @admin_bp.route('/dashboard')
 @login_required
 def dashboard():
