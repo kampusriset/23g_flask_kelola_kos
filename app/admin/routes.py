@@ -90,12 +90,14 @@ def hapus_peraturan(id):
 @admin_bp.route('/pengumuman', methods=['GET', 'POST'])
 @login_required
 def pengumuman():
+    # 1. Cek Role (Keamanan)
     if current_user.role != 'admin':
-        flash('Hanya admin yang bisa menambahkan pengumuman.', 'danger')
+        flash('Hanya admin yang bisa mengakses halaman ini.', 'danger')
         return redirect(url_for('admin.dashboard'))
 
     form = PengumumanForm()
 
+    # 2. Logic BUAT BARU (Create)
     if form.validate_on_submit():
         pengumuman_baru = Pengumuman(
             judul=form.judul.data,
@@ -107,33 +109,54 @@ def pengumuman():
         flash('Pengumuman berhasil ditambahkan!', 'success')
         return redirect(url_for('admin.pengumuman'))
 
+    # 3. Ambil data list untuk tampilan kanan
     semua_pengumuman = Pengumuman.query.order_by(Pengumuman.tanggal.desc()).all()
+
+    # 4. Render halaman biasa (Mode Edit: False)
     return render_template(
         'pengumuman.html',
         form=form,
-        semua_pengumuman=semua_pengumuman
+        semua_pengumuman=semua_pengumuman,
+        edit_mode=False
     )
 
 
-
-
-@admin_bp.route('/edit_pengumuman/<int:id>', methods=['GET', 'POST'])
+@admin_bp.route('/pengumuman/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_pengumuman(id):
-    pengumuman = Pengumuman.query.get_or_404(id)
-    form = PengumumanForm(obj=pengumuman)
+    # 1. Cek Role (Keamanan)
+    if current_user.role != 'admin':
+        flash('Akses ditolak.', 'danger')
+        return redirect(url_for('admin.dashboard'))
 
+    # 2. Ambil data yang mau diedit
+    pengumuman_edit = Pengumuman.query.get_or_404(id)
+    
+    # Isi form dengan data lama (Pre-fill)
+    form = PengumumanForm(obj=pengumuman_edit)
+
+    # 3. Logic SIMPAN PERUBAHAN (Update)
     if form.validate_on_submit():
-        pengumuman.judul = form.judul.data
-        pengumuman.isi = form.isi.data
+        pengumuman_edit.judul = form.judul.data
+        pengumuman_edit.isi = form.isi.data
+        # Tanggal update opsional: pengumuman_edit.tanggal = datetime.utcnow()
+        
         db.session.commit()
         flash('Pengumuman berhasil diperbarui!', 'success')
+        
+        # Setelah sukses, kembali ke halaman utama (reset form jadi kosong)
         return redirect(url_for('admin.pengumuman'))
 
+    # 4. Ambil data list untuk tampilan kanan (PENTING! Agar list tetap muncul saat mode edit)
+    semua_pengumuman = Pengumuman.query.order_by(Pengumuman.tanggal.desc()).all()
+
+    # 5. Render halaman YANG SAMA, tapi aktifkan Mode Edit
     return render_template(
-        'edit_pengumuman.html',
+        'pengumuman.html',
         form=form,
-        pengumuman=pengumuman
+        semua_pengumuman=semua_pengumuman,
+        edit_mode=True,             # <--- Memicu tampilan form berubah jadi 'Edit'
+        pengumuman_edit=pengumuman_edit # <--- Untuk highlight kartu di list kanan
     )
 
 

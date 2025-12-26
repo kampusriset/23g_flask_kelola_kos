@@ -1,83 +1,108 @@
-{% extends 'dashboard.html' %}
+{% extends 'layout.html' %} 
 
 {% block content %}
-<div class="max-w-3xl mx-auto p-6 space-y-8 text-gray-200">
+<div class="max-w-4xl mx-auto space-y-8">
 
-  <!-- ✅ Flash Message -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Kelola Peraturan Kos</h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Buat aturan yang jelas untuk kenyamanan bersama.</p>
+    </div>
+  </div>
+
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="space-y-2">
+      <div class="space-y-3">
         {% for category, message in messages %}
-          <div class="flex items-center gap-3 p-4 rounded-lg border shadow-sm
-                      {% if category == 'success' %}
-                        bg-green-900/40 text-green-300 border-green-700
-                      {% elif category == 'danger' %}
-                        bg-red-900/40 text-red-300 border-red-700
-                      {% else %}
-                        bg-gray-800 text-gray-300 border-gray-700
-                      {% endif %}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M5 13l4 4L19 7" />
-            </svg>
-            <span class="font-medium">{{ message }}</span>
+          <div class="flex items-center gap-3 p-4 rounded-xl border shadow-sm transition-all
+                      {{ 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' if category == 'success' else 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' }}">
+            
+            <div class="{{ 'bg-green-100 dark:bg-green-800' if category == 'success' else 'bg-red-100 dark:bg-red-800' }} p-2 rounded-full">
+                <i data-feather="{{ 'check-circle' if category == 'success' else 'alert-circle' }}" class="w-5 h-5"></i>
+            </div>
+            
+            <span class="font-medium text-sm">{{ message }}</span>
           </div>
         {% endfor %}
       </div>
     {% endif %}
   {% endwith %}
 
-  <!-- ✅ Card Utama -->
-  <div class="bg-gray-900 p-6 rounded-xl shadow-md border border-gray-700 space-y-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <div class="md:col-span-1">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 sticky top-24">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Tambah Peraturan</h2>
+            
+            <form method="POST" class="space-y-4">
+              {{ form.hidden_tag() }}
+              
+              <div>
+                {{ form.isi.label(class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2") }}
+                {{ form.isi(rows=4, class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 
+                                            bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white
+                                            focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition
+                                            placeholder-gray-400 dark:placeholder-gray-500 resize-none", 
+                                            placeholder="Contoh: Dilarang membawa hewan peliharaan...") }}
+                
+                {% if form.isi.errors %}
+                  <p class="text-red-500 text-xs mt-1 font-medium">{{ form.isi.errors[0] }}</p>
+                {% endif %}
+              </div>
 
-    <h1 class="text-3xl font-bold text-white">Kelola Peraturan Kos</h1>
-
-    <!-- ✅ Form Tambah Peraturan -->
-    <form method="POST" class="space-y-4">
-      {{ form.hidden_tag() }}
-      <div>
-        {{ form.isi.label(class="block font-semibold mb-1 text-gray-300") }}
-
-        {{ form.isi(rows=3, class="w-full border border-gray-700 bg-gray-800 text-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition", placeholder="Tulis peraturan baru...") }}
-       
-        {%  if form.isi.errors %}
-          <p class="text-red-400 text-sm mt-1">
-            {{ form.isi.errors[0] }}
-          </p>
-        {% endif %}
-      </div>
-
-      {{ form.submit(class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 font-semibold border border-green-700") }}
-    </form>
-
-    <!-- ✅ Daftar Peraturan -->
-    <div class="space-y-3">
-      <h2 class="text-xl font-semibold text-gray-200">Daftar Peraturan</h2>
-
-      <ul class="space-y-2 text-gray-300">
-        {% for p in semua_peraturan %}
-          <li class="flex items-center justify-between hover:text-white transition">
-
-            <div class="flex items-start gap-3">
-              <span class="text-blue-400 font-semibold w-6">{{ loop.index }}.</span>
-              <span>{{ p.isi }}</span>
-            </div>
-
-            <form method="POST" action="{{ url_for('admin.hapus_peraturan', id=p.id) }}">
-              <button class="text-red-400 hover:text-red-300 text-sm">
-                Hapus
-              </button>
+              {{ form.submit(class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md 
+                                   transform active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2") }}
             </form>
+        </div>
+    </div>
 
-          </li>
-        {% else %}
-          <li class="text-gray-500 italic">Belum ada peraturan.</li>
-        {% endfor %}
-      </ul>
+    <div class="md:col-span-2 space-y-4">
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <i data-feather="list" class="w-5 h-5 text-blue-500"></i>
+            Daftar Peraturan Aktif
+        </h2>
 
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+            {% if semua_peraturan %}
+                <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+                    {% for p in semua_peraturan %}
+                    <li class="group p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition duration-150 flex items-start justify-between gap-4">
+                        
+                        <div class="flex gap-4">
+                            <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 font-bold text-sm">
+                                {{ loop.index }}
+                            </span>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mt-1">
+                                {{ p.isi }}
+                            </p>
+                        </div>
+
+                        <form method="POST" action="{{ url_for('admin.hapus_peraturan', id=p.id) }}" onsubmit="return confirm('Yakin ingin menghapus peraturan ini?');">
+                            <button type="submit" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition" title="Hapus">
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </form>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="p-8 text-center flex flex-col items-center">
+                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/50 rounded-full flex items-center justify-center mb-4">
+                        <i data-feather="file-text" class="w-8 h-8 text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-500 dark:text-gray-400 font-medium">Belum ada peraturan yang dibuat.</p>
+                    <p class="text-gray-400 text-sm">Silakan tambah peraturan baru di formulir sebelah kiri.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
   </div>
 
 </div>
+
+<script>
+    feather.replace();
+</script>
 {% endblock %}
