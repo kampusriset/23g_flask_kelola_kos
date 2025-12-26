@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from .config import Config
+from flask import render_template
 
 # Inisialisasi ekstensi
 db = SQLAlchemy()
@@ -31,6 +32,14 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(penghuni_bp, url_prefix='/penghuni')
+    
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        return render_template('403.html'), 403
+    
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('404.html'), 404
 
     # Route utama
     @app.route('/')
