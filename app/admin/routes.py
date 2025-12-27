@@ -1,12 +1,14 @@
-from flask import app, render_template, request, redirect, url_for, flash, abort
+from flask import render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
+
 from app import db
-from app.models import User
-from app.models import User, Peraturan
-from app.models import Pengumuman
+from app.models import User, Peraturan, Pengumuman
+from app.utils.decorators import role_required
+
 from . import admin_bp
 from .forms import PenghuniForm, PeraturanForm, PengumumanForm
+from datetime import datetime
 
 # === ROUTE UNTUK TEST ===
 @admin_bp.route('/test-403')
@@ -16,19 +18,26 @@ def cek_halaman_error():
 @admin_bp.route('/test-404')
 def cek_halaman_tidak_ditemukan():
     abort(404)
+ 
+ 
+ 
     
 @admin_bp.route('/dashboard')
 @login_required
+@role_required('admin')
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template(
+        'dashboard_admin.html',
+        sidebar='partials/sidebar_admin.html'
+    )
+
+
+
 
 @admin_bp.route('/kamar', methods=['GET', 'POST'])
 @login_required
+@role_required('admin')
 def create_penghuni():
-    if current_user.role != 'admin':
-        flash('Hanya admin yang bisa membuat akun penghuni.', 'danger')
-        return redirect(url_for('auth.login'))
-
     form = PenghuniForm()
 
     if form.validate_on_submit():
@@ -44,18 +53,18 @@ def create_penghuni():
         flash('Akun penghuni berhasil dibuat!', 'success')
         return redirect(url_for('admin.dashboard'))
 
-    return render_template('kamar.html', form=form)
+    return render_template(
+        'kamar_admin.html',
+        sidebar='partials/sidebar_admin.html',
+        form=form)
 
 
 
 
 @admin_bp.route('/peraturan', methods=['GET', 'POST'])
 @login_required
+@role_required('admin')
 def peraturan():
-    if current_user.role != 'admin':
-        flash('Hanya admin yang bisa menambahkan peraturan.', 'danger')
-        return redirect(url_for('admin.dashboard'))
-
     form = PeraturanForm()
 
     if form.validate_on_submit():
@@ -67,7 +76,8 @@ def peraturan():
 
     semua_peraturan = Peraturan.query.all()
     return render_template(
-        'peraturan.html',
+        'peraturan_admin.html',
+        sidebar='partials/sidebar_admin.html',
         form=form,
         semua_peraturan=semua_peraturan
     )
@@ -77,6 +87,7 @@ def peraturan():
 
 @admin_bp.route('/hapus_peraturan/<int:id>', methods=['POST'])
 @login_required
+@role_required('admin')
 def hapus_peraturan(id):
     peraturan = Peraturan.query.get_or_404(id)
     db.session.delete(peraturan)
@@ -89,15 +100,10 @@ def hapus_peraturan(id):
 
 @admin_bp.route('/pengumuman', methods=['GET', 'POST'])
 @login_required
+@role_required('admin')
 def pengumuman():
-    # 1. Cek Role (Keamanan)
-    if current_user.role != 'admin':
-        flash('Hanya admin yang bisa mengakses halaman ini.', 'danger')
-        return redirect(url_for('admin.dashboard'))
-
     form = PengumumanForm()
 
-    # 2. Logic BUAT BARU (Create)
     if form.validate_on_submit():
         pengumuman_baru = Pengumuman(
             judul=form.judul.data,
@@ -109,62 +115,55 @@ def pengumuman():
         flash('Pengumuman berhasil ditambahkan!', 'success')
         return redirect(url_for('admin.pengumuman'))
 
-    # 3. Ambil data list untuk tampilan kanan
     semua_pengumuman = Pengumuman.query.order_by(Pengumuman.tanggal.desc()).all()
 
-    # 4. Render halaman biasa (Mode Edit: False)
     return render_template(
-        'pengumuman.html',
+        'pengumuman_admin.html',
+        sidebar='partials/sidebar_admin.html',
         form=form,
         semua_pengumuman=semua_pengumuman,
         edit_mode=False
     )
 
 
+
+
 @admin_bp.route('/pengumuman/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
+@role_required('admin')
 def edit_pengumuman(id):
-    # 1. Cek Role (Keamanan)
-    if current_user.role != 'admin':
-        flash('Akses ditolak.', 'danger')
-        return redirect(url_for('admin.dashboard'))
-
-    # 2. Ambil data yang mau diedit
     pengumuman_edit = Pengumuman.query.get_or_404(id)
     
-    # Isi form dengan data lama (Pre-fill)
     form = PengumumanForm(obj=pengumuman_edit)
 
-    # 3. Logic SIMPAN PERUBAHAN (Update)
     if form.validate_on_submit():
         pengumuman_edit.judul = form.judul.data
         pengumuman_edit.isi = form.isi.data
-        # Tanggal update opsional: pengumuman_edit.tanggal = datetime.utcnow()
+        pengumuman_edit.tanggal = datetime.utcnow()
         
         db.session.commit()
         flash('Pengumuman berhasil diperbarui!', 'success')
         
-        # Setelah sukses, kembali ke halaman utama (reset form jadi kosong)
         return redirect(url_for('admin.pengumuman'))
 
-    # 4. Ambil data list untuk tampilan kanan (PENTING! Agar list tetap muncul saat mode edit)
     semua_pengumuman = Pengumuman.query.order_by(Pengumuman.tanggal.desc()).all()
 
-    # 5. Render halaman YANG SAMA, tapi aktifkan Mode Edit
+
     return render_template(
-        'pengumuman.html',
+        'pengumuman_admin.html',
+        sidebar='partials/sidebar_admin.html',
         form=form,
         semua_pengumuman=semua_pengumuman,
-        edit_mode=True,             # <--- Memicu tampilan form berubah jadi 'Edit'
-        pengumuman_edit=pengumuman_edit # <--- Untuk highlight kartu di list kanan
+        edit_mode=True,
+        pengumuman_edit=pengumuman_edit
     )
 
 
 
 
-# ✅ Route Hapus Pengumuman
 @admin_bp.route('/hapus_pengumuman/<int:id>', methods=['POST'])
 @login_required
+@role_required('admin')
 def hapus_pengumuman(id):
     pengumuman = Pengumuman.query.get_or_404(id)
     db.session.delete(pengumuman)

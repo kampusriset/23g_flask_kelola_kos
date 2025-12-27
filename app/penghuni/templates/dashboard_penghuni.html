@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mb-6 space-y-3">
+        {% for category, message in messages %}
+          <div class="flex items-center gap-3 p-4 rounded-xl border shadow-sm transition-all
+                      {{ 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' if category == 'success' else 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' }}">
+            <div class="{{ 'bg-green-100 dark:bg-green-800' if category == 'success' else 'bg-red-100 dark:bg-red-800' }} p-2 rounded-full">
+                <i data-feather="{{ 'check-circle' if category == 'success' else 'alert-circle' }}" class="w-5 h-5"></i>
+            </div>
+            <span class="font-medium text-sm">{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
+      <div class="absolute right-0 top-0 opacity-10 transform translate-x-10 -translate-y-5">
+          <i data-feather="shield" class="w-48 h-48"></i>
+      </div>
+      <div class="relative z-10">
+          <p class="text-blue-100 font-medium mb-1">Dashboard Administrator</p>
+          <h1 class="text-2xl md:text-4xl font-bold mb-2">Selamat Datang, {{ current_user.username }}!</h1>
+          <p class="text-blue-50 text-sm md:text-base opacity-90">Anda login sebagai <strong>{{ current_user.role }}!</strong>.</p>
+      </div>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+
+      <a href="#" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+          <div class="bg-blue-100 dark:bg-blue-900/40 p-4 rounded-full text-blue-600 dark:text-blue-400 group-hover:scale-110 transition duration-300">
+              <i data-feather="key" class="w-6 h-6"></i>
+          </div>
+          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400">Kamar</span>
+      </a>
+
+      <a href="#" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+          <div class="bg-orange-100 dark:bg-orange-900/40 p-4 rounded-full text-orange-600 dark:text-orange-400 group-hover:scale-110 transition duration-300">
+              <i data-feather="credit-card" class="w-6 h-6"></i>
+          </div>
+          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-orange-600 dark:group-hover:text-orange-400">Pembayaran</span>
+      </a>
+
+      <a href="{{ url_for('penghuni.pengumuman') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+          <div class="bg-purple-100 dark:bg-purple-900/40 p-4 rounded-full text-purple-600 dark:text-purple-400 group-hover:scale-110 transition duration-300">
+              <i data-feather="bell" class="w-6 h-6"></i>
+          </div>
+          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-purple-600 dark:group-hover:text-purple-400">Pengumuman</span>
+      </a>
+
+      <a href="{{ url_for('penghuni.peraturan') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+          <div class="bg-green-100 dark:bg-green-900/40 p-4 rounded-full text-green-600 dark:text-green-400 group-hover:scale-110 transition duration-300">
+              <i data-feather="book" class="w-6 h-6"></i>
+          </div>
+          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-green-600 dark:group-hover:text-green-400">Peraturan</span>
+      </a>
+
+  </div>
+
+</div>
+<script>
+  if (typeof feather !== 'undefined') { feather.replace(); }
+</script>
+{% endblock %}
