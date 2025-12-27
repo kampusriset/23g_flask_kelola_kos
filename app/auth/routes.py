@@ -20,7 +20,7 @@ def login():
             if user.role == 'admin':
                 return redirect(url_for('admin.dashboard'))
             else:
-                return redirect(url_for('penghuni.index'))
+                return redirect(url_for('penghuni.dashboard'))
         else:
             flash('Username atau password salah', 'danger')
     return render_template('login.html', form=form)
