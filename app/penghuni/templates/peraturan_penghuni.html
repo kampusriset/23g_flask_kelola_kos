@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+        Peraturan Kos
+    </h1>
+    <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+        Harap membaca dan mematuhi peraturan demi kenyamanan bersama.
+    </p>
+  </div>
+
+  <div class="space-y-4">
+      <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+          <i data-feather="list" class="w-5 h-5 text-blue-500"></i>
+          Daftar Peraturan
+      </h2>
+
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+          {% if semua_peraturan %}
+              <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+                  {% for p in semua_peraturan %}
+                  <li class="p-4 flex items-start gap-4">
+                      
+                      <span class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full 
+                                   bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 
+                                   font-bold text-sm">
+                          {{ loop.index }}
+                      </span>
+
+                      <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mt-1">
+                          {{ p.isi }}
+                      </p>
+
+                  </li>
+                  {% endfor %}
+              </ul>
+          {% else %}
+              <div class="p-8 text-center flex flex-col items-center">
+                  <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/50 rounded-full flex items-center justify-center mb-4">
+                      <i data-feather="file-text" class="w-8 h-8 text-gray-400"></i>
+                  </div>
+                  <p class="text-gray-500 dark:text-gray-400 font-medium">
+                      Belum ada peraturan
+                  </p>
+                  <p class="text-gray-400 text-sm">
+                      Peraturan akan ditampilkan di sini jika sudah tersedia.
+                  </p>
+              </div>
+          {% endif %}
+      </div>
+  </div>
+
+</div>
+
+<script>feather.replace();</script>
+{% endblock %}
