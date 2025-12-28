@@ -15,7 +15,7 @@
       <i data-feather="home" class="w-5 h-5"></i> <span>Home</span>
     </a>
 
-    <a href="#"
+    <a href="{{ url_for('penghuni.jadwal') }}"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.jadwal' else nav_inactive }}">
       <i data-feather="calendar" class="w-5 h-5"></i> <span>Jadwal</span>
     </a>  

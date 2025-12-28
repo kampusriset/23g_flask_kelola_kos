@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Jadwal & Kegiatan Kos</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Pantau agenda kegiatan mendatang agar Anda tidak ketinggalan informasi.</p>
+    </div>
+
+    <div class="relative">
+        {% if semua_jadwal %}
+            <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
+            
+            <div class="space-y-8">
+                {% for j in semua_jadwal %}
+                <div class="relative flex items-start gap-6 group">
+                    <div class="z-10 flex-shrink-0 w-16 h-16 rounded-full bg-white dark:bg-gray-800 border-4 border-blue-500 shadow-md flex flex-col items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                        <span class="text-[10px] font-bold uppercase leading-none">{{ j.tanggal_mulai.strftime('%b') }}</span>
+                        <span class="text-xl font-black leading-none mt-1">{{ j.tanggal_mulai.strftime('%d') }}</span>
+                    </div>
+
+                    <div class="flex-1 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-all">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">{{ j.nama_kegiatan }}</h3>
+                            <span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-1 rounded-md font-bold uppercase tracking-wider">Mendatang</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                                <span class="flex items-center gap-1.5"><i data-feather="clock" class="w-4 h-4"></i> {{ j.tanggal_mulai.strftime('%H:%M WIB') }}</span>
+                                {% if j.lokasi %}<span class="flex items-center gap-1.5"><i data-feather="map-pin" class="w-4 h-4"></i> {{ j.lokasi }}</span>{% endif %}
+                            </div>
+                            {% if j.keterangan %}
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed border-t dark:border-gray-700 pt-2 italic">
+                                "{{ j.keterangan }}"
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center flex flex-col items-center">
+                <i data-feather="coffee" class="w-8 h-8 text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Tidak ada agenda terdekat</h3>
+                <p class="text-gray-400 text-sm">Santai sejenak, belum ada kegiatan dalam waktu dekat.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<script>feather.replace();</script>
+{% endblock %}
