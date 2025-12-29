@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField, SubmitField
+from wtforms import StringField, TextAreaField, PasswordField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email
 from wtforms import DateTimeLocalField
 
@@ -29,6 +29,19 @@ class PengumumanForm(FlaskForm):
     isi = TextAreaField('Isi Pengumuman', validators=[DataRequired()])
     submit = SubmitField('Tambah Pengumuman')
 
+
+# =========================
+# Form Kamar (Admin)
+# =========================
+class KamarForm(FlaskForm):
+    nomor_kamar = StringField('Nomor Kamar', validators=[DataRequired()])
+    tipe = StringField('Tipe Kamar', validators=[DataRequired()])
+    harga = IntegerField('Harga (Rp)', validators=[DataRequired()])
+    status = SelectField('Status', choices=[('kosong', 'Kosong'), ('terisi', 'Terisi')], default='kosong')
+    fasilitas = TextAreaField('Fasilitas')
+    keterangan = TextAreaField('Keterangan Tambahan')
+    penghuni_id = SelectField('Penghuni (Opsional)', coerce=int, choices=[], default=0)
+    submit = SubmitField('Simpan Kamar')
 # =========================
 # Form Jadwal
 # =========================

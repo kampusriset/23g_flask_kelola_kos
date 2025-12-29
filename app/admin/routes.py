@@ -1,14 +1,14 @@
-from flask import render_template, request, redirect, url_for, flash, abort
+from flask import render_template, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 
 from app import db
-from app.models import User, Peraturan, Pengumuman, Pengaduan
+from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan
 from app.utils.decorators import role_required
 from app.models import User, Peraturan, Pengumuman, Jadwal # Tambahkan Jadwal di import
 
 from . import admin_bp
-from .forms import PenghuniForm, PeraturanForm, PengumumanForm, JadwalForm
+from .forms import PenghuniForm, PeraturanForm, PengumumanForm, KamarForm, JadwalForm
 from datetime import datetime
 
 # === ROUTE UNTUK TEST ===
@@ -35,7 +35,7 @@ def dashboard():
 
 
 
-@admin_bp.route('/kamar', methods=['GET', 'POST'])
+@admin_bp.route('/tambah-penghuni', methods=['GET', 'POST'])
 @login_required
 @role_required('admin')
 def create_penghuni():
@@ -173,6 +173,113 @@ def hapus_pengumuman(id):
     return redirect(url_for('admin.pengumuman'))
 
 
+
+@admin_bp.route('/kamar', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def kelola_kamar():
+    form = KamarForm()
+    
+    
+    penghuni_free = Penghuni.query.filter_by(kamar_id=None).all()
+    form.penghuni_id.choices = [(0, '- Tidak Ada Penghuni -')] + [(p.id, f"{p.nama}") for p in penghuni_free]
+
+    
+    if form.validate_on_submit():
+        
+        if Kamar.query.filter_by(nomor_kamar=form.nomor_kamar.data).first():
+            flash('Nomor kamar sudah ada!', 'danger')
+        else:
+            kamar = Kamar(
+                nomor_kamar=form.nomor_kamar.data,
+                tipe=form.tipe.data,
+                harga=form.harga.data,
+                status=form.status.data,
+                fasilitas=form.fasilitas.data,
+                keterangan=form.keterangan.data
+            )
+            
+            if form.penghuni_id.data != 0:
+                penghuni = Penghuni.query.get(form.penghuni_id.data)
+                penghuni.kamar = kamar
+                kamar.status = 'terisi'
+
+            db.session.add(kamar)
+            db.session.commit()
+            flash('Kamar berhasil ditambahkan!', 'success')
+            return redirect(url_for('admin.kelola_kamar'))
+
+    semua_kamar = Kamar.query.order_by(Kamar.nomor_kamar.asc()).all()
+
+    return render_template(
+        'kamar_admin.html',
+        sidebar='partials/sidebar_admin.html',
+        form=form,
+        semua_kamar=semua_kamar,
+        edit_mode=False,
+        kamar_edit=None  
+    )
+
+@admin_bp.route('/kamar/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def edit_kamar(id):
+    kamar = Kamar.query.get_or_404(id)
+    form = KamarForm(obj=kamar) 
+    
+    penghuni_free = Penghuni.query.filter((Penghuni.kamar_id == None) | (Penghuni.kamar_id == id)).all()
+    form.penghuni_id.choices = [(0, '- Tidak Ada Penghuni -')] + [(p.id, f"{p.nama}") for p in penghuni_free]
+
+    
+    current_p = Penghuni.query.filter_by(kamar_id=id).first()
+    if request.method == 'GET' and current_p:
+        form.penghuni_id.data = current_p.id
+
+    if form.validate_on_submit():
+        form.populate_obj(kamar) 
+        
+        selected_pid = form.penghuni_id.data
+        
+        
+        if current_p and current_p.id != selected_pid:
+            current_p.kamar_id = None
+            
+        if selected_pid != 0:
+            penghuni_baru = Penghuni.query.get(selected_pid)
+            penghuni_baru.kamar_id = kamar.id
+            kamar.status = 'terisi'
+        else:
+            kamar.status = 'kosong'
+
+        db.session.commit()
+        flash('Data kamar berhasil diperbarui!', 'success')
+        return redirect(url_for('admin.kelola_kamar'))
+
+    semua_kamar = Kamar.query.order_by(Kamar.nomor_kamar.asc()).all()
+    
+    return render_template(
+        'kamar_admin.html',
+        sidebar='partials/sidebar_admin.html',
+        form=form,
+        semua_kamar=semua_kamar,
+        edit_mode=True,
+        kamar_edit=kamar 
+    )
+
+@admin_bp.route('/kamar/hapus/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def hapus_kamar(id):
+    kamar = Kamar.query.get_or_404(id)
+    
+    if kamar.penghuni:
+        for p in kamar.penghuni:
+            p.kamar_id = None
+            
+    db.session.delete(kamar)
+    db.session.commit()
+    flash('Kamar berhasil dihapus.', 'success')
+    return redirect(url_for('admin.kelola_kamar'))
 @admin_bp.route('/jadwal', methods=['GET', 'POST'])
 @admin_bp.route('/jadwal/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
