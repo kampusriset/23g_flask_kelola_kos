@@ -1,0 +1,81 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-8">
+
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Kotak Pengaduan</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Daftar keluhan dan masukan dari para penghuni kos.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="space-y-3">
+                {% for category, message in messages %}
+                    <div class="flex items-center gap-3 p-4 rounded-xl border shadow-sm {{ 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400' if category == 'success' else 'bg-red-50 text-red-700 border-red-200' }}">
+                        <i data-feather="check-circle" class="w-5 h-5"></i>
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="space-y-4">
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <i data-feather="mail" class="w-5 h-5 text-blue-500"></i> Laporan Masuk
+        </h2>
+
+        {% if laporan_masuk %}
+            <div class="grid grid-cols-1 gap-6">
+                {% for l in laporan_masuk %}
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-1 rounded-md uppercase">
+                                    {{ l.penghuni.nama }} (Kamar {{ l.penghuni.kamar.nomor_kamar if l.penghuni.kamar else '-' }})
+                                </span>
+                                <span class="text-[10px] text-gray-400">{{ l.tanggal.strftime('%d/%m/%Y %H:%M') }}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">{{ l.judul }}</h3>
+                        </div>
+                        <span class="w-fit px-3 py-1 rounded-full text-[10px] font-bold uppercase border 
+                            {{ 'bg-yellow-50 text-yellow-600 border-yellow-200' if l.status == 'menunggu' else 'bg-green-50 text-green-600 border-green-200' }}">
+                            {{ l.status }}
+                        </span>
+                    </div>
+
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-6 leading-relaxed bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                        {{ l.isi }}
+                    </p>
+
+                    {% if l.status == 'menunggu' %}
+                    <form action="{{ url_for('admin.tanggapi_pengaduan', id=l.id) }}" method="POST" class="space-y-3">
+                        <textarea name="tanggapan" rows="2" required
+                            class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
+                            placeholder="Tulis tanggapan atau instruksi penyelesaian..."></textarea>
+                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
+                            <i data-feather="send" class="w-4 h-4"></i> Kirim Tanggapan & Selesaikan
+                        </button>
+                    </form>
+                    {% else %}
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800">
+                        <p class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase mb-1">Tanggapan Anda:</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-300 italic">"{{ l.tanggapan }}"</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center flex flex-col items-center">
+                <i data-feather="coffee" class="w-8 h-8 text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Tidak ada pengaduan baru</h3>
+                <p class="text-gray-400 text-sm">Semua keluhan penghuni telah ditangani.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<script>feather.replace();</script>
+{% endblock %}
