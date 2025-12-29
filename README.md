@@ -115,36 +115,32 @@ http://127.0.0.1:5000
 
 STRUKTUR FOLDER (RINGKAS)
 
-MyKost/
+    MyKost/
+    ├── app/
+    │   ├── admin/
+    │   ├── auth/
+    │   ├── penghuni/
+    │   ├── seeds/
+    │   ├── static/
+    │   ├── templates/
+    │   ├── utils/
+    │   ├── __init__.py
+    │   ├── config.py
+    │   ├── extensions.py
+    │   └── models.py
+    ├── migrations/
+    ├── Teams/
+    ├── .gitignore
+    ├── LICENSE
+    ├── package.json
+    ├── package-lock.json
+    ├── README.md
+    ├── requirements.txt
+    ├── run.py
+    ├── seed.py
+    ├── tailwind.config.js
+    └── test_db.py
 
-
-├── app/
-
-│   ├── models/
-
-│   ├── routes/
-
-│   ├── templates/
-
-│   ├── static/
-
-│   └── config.py
-
-├── migrations/
-
-│   └── versions/
-
-├── sql/
-
-│   └── setup_db.sql
-
-├── setup_database.py
-
-├── requirements.txt
-
-├── README.md
-
-└── .gitignore
 
 ----------------------------------------------------------------
 
