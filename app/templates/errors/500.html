@@ -39,7 +39,7 @@
     </p>
 
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="{{ url_for('admin.dashboard') if 'admin.dashboard' in url_for.globals else '/' }}"
+      <a href="{% if current_user.role == 'admin' %}{{ url_for('admin.dashboard') }}{% else %}{{ url_for('penghuni.dashboard') }}{% endif %}" 
          class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-1">
         <i data-feather="home" class="w-4 h-4"></i>
         Kembali ke Dashboard

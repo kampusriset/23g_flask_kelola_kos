@@ -22,7 +22,7 @@
 
     <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden relative">
         <form method="POST"
-                action="{{ url_for('admin.update_profile_photos') }}"
+                action="{{ url_for('penghuni.update_profile_photos') }}"
                 enctype="multipart/form-data">
 
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
