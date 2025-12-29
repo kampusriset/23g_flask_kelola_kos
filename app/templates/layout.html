@@ -52,7 +52,7 @@
       <header
         class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md md:bg-white md:dark:bg-gray-800 p-4 md:px-8 md:py-6 flex justify-between items-center sticky top-0 z-20 transition-colors duration-300 shadow-sm dark:shadow-none dark:border-b dark:border-gray-700">
         <div class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">
-          <a href="{{ url_for('penghuni.dashboard') }}" class="md:hidden flex items-center gap-3">
+          <a href="{% if current_user.role == 'admin' %}{{ url_for('admin.dashboard') }}{% else %}{{ url_for('penghuni.dashboard') }}{% endif %}" class="md:hidden flex items-center gap-3">
             <img src="{{ url_for('static', filename='img/logo.svg') }}" class="w-9 h-9 object-contain">
             <h1 class="text-xl font-bold text-gray-800 dark:text-white tracking-tight">MyKost</h1>
           </a>
@@ -73,7 +73,9 @@
           </button>
 
           <div class="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 dark:border-gray-600 overflow-hidden">
-            <img src="https://ui-avatars.com/api/?name=User&background=random" alt="Profil">
+            <a href="{% if current_user.role == 'admin' %}{{ url_for('admin.profile') }}{% else %}{{ url_for('penghuni.profile') }}{% endif %}">
+              <img src="{{ url_for('static', filename=current_user.profile_photo if current_user.profile_photo else 'img/default-avatar.jpeg') }}" alt="Profile">
+            </a>
           </div>
         </div>
       </header>

@@ -15,7 +15,7 @@
       <i data-feather="home" class="w-5 h-5"></i> <span>Home</span>
     </a>
 
-    <a href="#"
+    <a href="{{ url_for('penghuni.jadwal') }}"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.jadwal' else nav_inactive }}">
       <i data-feather="calendar" class="w-5 h-5"></i> <span>Jadwal</span>
     </a>  
@@ -30,7 +30,7 @@
       <i data-feather="credit-card" class="w-5 h-5"></i> <span>Pembayaran</span>
     </a>
 
-    <a href="#"
+    <a href="{{ url_for('penghuni.pengaduan') }}"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.pengaduan' else nav_inactive }}">
       <i data-feather="archive" class="w-5 h-5"></i> <span>Pengaduan</span>
     </a>
@@ -48,7 +48,7 @@
   </nav>
 
   <div class="p-4 border-t border-gray-100 dark:border-gray-700 space-y-1">
-    <a href="#"
+    <a href="{{ url_for('penghuni.profile') }}"
       class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
       <i data-feather="user" class="w-5 h-5"></i> <span>Profile</span>
     </a>
@@ -96,9 +96,9 @@
   <div class="overflow-y-auto pt-4 px-4 no-scrollbar">
     <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">Profile</p>
 
-    <a href="#" class="flex items-center gap-3 px-4 py-3 transition">
+    <a href="{{ url_for('penghuni.profile') }}" class="flex items-center gap-3 px-4 py-3 transition">
       <div class="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 dark:border-gray-600 overflow-hidden">
-        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="Profil">
+        <img src="{{ url_for('static', filename=current_user.profile_photo if current_user.profile_photo else 'img/default-avatar.jpeg') }}" alt="Profile">
       </div>
       <span class="font-xl font-bold">Profile</span>
     </a>

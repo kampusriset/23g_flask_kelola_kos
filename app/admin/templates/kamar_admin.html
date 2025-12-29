@@ -1,14 +1,160 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %} 
 
 {% block content %}
-<div>
-  <h1 class="text-2xl font-bold mb-4">Buat Akun Penghuni Baru</h1>
-  <form method="POST">
-    {{ form.hidden_tag() }}
-  <input type="text" name="username" placeholder="Username" required>
-  <input type="password" name="password" placeholder="Password" required>
-  <input type="email" name="email" placeholder="Email (opsional)">
-  <button type="submit">Buat Akun Penghuni</button>
-</form>
+<div class="max-w-6xl mx-auto space-y-8">
+
+  <div>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Kelola Data Kamar</h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+        Atur ketersediaan kamar dan tetapkan penghuni.
+      </p>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="space-y-3">
+        {% for category, message in messages %}
+          <div class="flex items-center gap-3 p-4 rounded-xl border shadow-sm transition-all
+                      {{ 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' if category == 'success' else 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' }}">
+            <div class="{{ 'bg-green-100 dark:bg-green-800' if category == 'success' else 'bg-red-100 dark:bg-red-800' }} p-2 rounded-full">
+                <i data-feather="{{ 'check-circle' if category == 'success' else 'alert-circle' }}" class="w-5 h-5"></i>
+            </div>
+            <span class="font-medium text-sm">{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <div class="lg:col-span-1">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border sticky top-24 transition-all duration-300
+                    {{ 'border-yellow-400 ring-2 ring-yellow-100 dark:ring-yellow-900/50' if edit_mode else 'border-gray-100 dark:border-gray-700' }}">
+            
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2 {{ 'text-yellow-600 dark:text-yellow-500' if edit_mode else 'text-gray-800 dark:text-white' }}">
+                {% if edit_mode %}
+                    <i data-feather="edit-3" class="w-5 h-5"></i> Edit Kamar {{ kamar_edit.nomor_kamar }}
+                {% else %}
+                    <i data-feather="plus-square" class="w-5 h-5 text-blue-500"></i> Tambah Kamar
+                {% endif %}
+            </h2>
+            
+            <form method="POST" 
+                  action="{{ url_for('admin.edit_kamar', id=kamar_edit.id) if edit_mode else url_for('admin.kelola_kamar') }}" 
+                  class="space-y-4">
+              
+              {{ form.hidden_tag() }}
+              
+              <div>
+                {{ form.nomor_kamar.label(class="block text-xs font-bold uppercase text-gray-500 mb-1") }}
+                {{ form.nomor_kamar(class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none", placeholder="A101") }}
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    {{ form.tipe.label(class="block text-xs font-bold uppercase text-gray-500 mb-1") }}
+                    {{ form.tipe(class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none", placeholder="3x4 AC") }}
+                  </div>
+                  <div>
+                    {{ form.harga.label(class="block text-xs font-bold uppercase text-gray-500 mb-1") }}
+                    {{ form.harga(class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none") }}
+                  </div>
+              </div>
+
+              <div>
+                {{ form.status.label(class="block text-xs font-bold uppercase text-gray-500 mb-1") }}
+                {{ form.status(class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none") }}
+              </div>
+
+              <div>
+                {{ form.penghuni_id.label(class="block text-xs font-bold uppercase text-gray-500 mb-1") }}
+                {{ form.penghuni_id(class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer") }}
+                <p class="text-[10px] text-gray-400 mt-1">*Pilih user penghuni (Username)</p>
+              </div>
+
+              <div>
+                {{ form.fasilitas.label(class="block text-xs font-bold uppercase text-gray-500 mb-1") }}
+                {{ form.fasilitas(rows=3, class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none resize-none") }}
+              </div>
+
+              <div class="flex gap-2 pt-2">
+                  {% if edit_mode %}
+                    <button type="submit" class="flex-1 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-bold shadow-md transform active:scale-95 transition-all">Simpan</button>
+                    <a href="{{ url_for('admin.kelola_kamar') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition">Batal</a>
+                  {% else %}
+                    <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md transform active:scale-95 transition-all">Tambah Data</button>
+                  {% endif %}
+              </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="lg:col-span-2 space-y-4">
+        {% if semua_kamar %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for k in semua_kamar %}
+                <div class="group bg-white dark:bg-gray-800 p-5 rounded-2xl border shadow-sm transition-all duration-200 hover:shadow-md
+                            {{ 'border-yellow-400 ring-2 ring-yellow-100 dark:ring-yellow-900/30 bg-yellow-50/50 dark:bg-yellow-900/10' if edit_mode and kamar_edit.id == k.id else 'border-gray-100 dark:border-gray-700' }}">
+                    
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xl font-extrabold text-gray-800 dark:text-white">
+                            {{ k.nomor_kamar }}
+                        </h3>
+                        {% if k.status == 'terisi' %}
+                            <span class="px-2 py-1 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 text-xs font-bold rounded-lg uppercase tracking-wider">Terisi</span>
+                        {% else %}
+                            <span class="px-2 py-1 bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 text-xs font-bold rounded-lg uppercase tracking-wider">Kosong</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="space-y-1 mb-4">
+                        <p class="text-sm font-semibold text-blue-600 dark:text-blue-400">Rp {{ "{:,.0f}".format(k.harga) }} <span class="text-gray-400 text-xs font-normal">/ bln</span></p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ k.tipe }}</p>
+                    </div>
+
+                    {% if k.penghuni %}
+                    <div class="flex items-center gap-2 mb-4 p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                        <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 p-1.5 rounded-full">
+                            <i data-feather="user" class="w-3 h-3"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-700 dark:text-gray-300">
+                            {% for p in k.penghuni %}
+                                {{ p.nama }}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+
+                    <div class="flex justify-end gap-2 pt-2 border-t border-gray-100 dark:border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a href="{{ url_for('admin.edit_kamar', id=k.id) }}" 
+                           class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition"
+                           title="Edit Kamar Ini">
+                            <i data-feather="edit-2" class="w-4 h-4"></i>
+                        </a>
+                        
+                        <form method="POST" action="{{ url_for('admin.hapus_kamar', id=k.id) }}" onsubmit="return confirm('Hapus kamar {{ k.nomor_kamar }}?');">
+                            <button type="submit" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition" title="Hapus">
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center flex flex-col items-center justify-center">
+                <i data-feather="layout" class="w-8 h-8 text-gray-400 mb-4 opacity-50"></i>
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Belum ada data kamar</h3>
+                <p class="text-gray-500 text-sm">Gunakan formulir di kiri untuk menambah kamar.</p>
+            </div>
+        {% endif %}
+    </div>
+
+  </div>
 </div>
+
+<script>feather.replace();</script>
 {% endblock %}
