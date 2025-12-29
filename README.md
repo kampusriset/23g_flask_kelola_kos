@@ -58,8 +58,6 @@ Project ini menggunakan Flask-Migrate untuk mengelola perubahan struktur databas
 
 DATABASE BARU (KOSONG)
 
-DATABASE BARU (KOSONG)
-
 1. Buat database kosong di MySQL / MariaDB:
 
         mykost_db
