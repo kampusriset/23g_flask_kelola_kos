@@ -30,7 +30,7 @@
       <i data-feather="credit-card" class="w-5 h-5"></i> <span>Pembayaran</span>
     </a>
 
-    <a href="#"
+    <a href="{{ url_for('penghuni.pengaduan') }}"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.pengaduan' else nav_inactive }}">
       <i data-feather="archive" class="w-5 h-5"></i> <span>Pengaduan</span>
     </a>

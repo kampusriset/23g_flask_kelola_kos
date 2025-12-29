@@ -1,9 +1,9 @@
-from flask import render_template, redirect, url_for, flash, abort
+from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 
 from app import db
-from app.models import User, Peraturan, Pengumuman
+from app.models import User, Peraturan, Pengumuman, Pengaduan
 from app.utils.decorators import role_required
 from app.models import User, Peraturan, Pengumuman, Jadwal # Tambahkan Jadwal di import
 
@@ -227,3 +227,26 @@ def hapus_jadwal(id):
     db.session.commit()
     flash('Jadwal dihapus.', 'success')
     return redirect(url_for('admin.jadwal'))
+@admin_bp.route('/pengaduan', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def daftar_pengaduan():
+    laporan_masuk = Pengaduan.query.order_by(Pengaduan.tanggal.desc()).all()
+    return render_template(
+        'pengaduan_admin.html',
+        sidebar='partials/sidebar_admin.html',
+        laporan_masuk=laporan_masuk
+    )
+
+@admin_bp.route('/pengaduan/tanggapi/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def tanggapi_pengaduan(id):
+    laporan = Pengaduan.query.get_or_404(id)
+    tanggapan = request.form.get('tanggapan')
+    if tanggapan:
+        laporan.tanggapan = tanggapan
+        laporan.status = 'selesai' # Ubah status dari menunggu ke selesai
+        db.session.commit()
+        flash('Berhasil memberikan tanggapan!', 'success')
+    return redirect(url_for('admin.daftar_pengaduan'))

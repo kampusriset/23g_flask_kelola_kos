@@ -38,3 +38,9 @@ class JadwalForm(FlaskForm):
     lokasi = StringField('Lokasi (Opsional)')
     keterangan = TextAreaField('Detail Kegiatan')
     submit = SubmitField('Simpan Jadwal')
+# Form Pengaduan
+# =========================
+# Tambahkan di app/admin/forms.py
+class TanggapanForm(FlaskForm):
+    tanggapan = TextAreaField('Berikan Tanggapan', validators=[DataRequired()])
+    submit = SubmitField('Kirim Tanggapan')
