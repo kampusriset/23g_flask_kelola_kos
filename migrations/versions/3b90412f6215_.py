@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 9975e4e992b1
+Revision ID: 3b90412f6215
 Revises: 
-Create Date: 2025-12-29 13:53:06.325517
+Create Date: 2025-12-29 17:35:00.581994
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9975e4e992b1'
+revision = '3b90412f6215'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,6 +36,18 @@ def upgrade():
     sa.Column('keterangan', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('nomor_kamar')
+    )
+    op.create_table('pembayaran',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('penghuni_id', sa.Integer(), nullable=False),
+    sa.Column('kamar_id', sa.Integer(), nullable=False),
+    sa.Column('bulan', sa.String(length=20), nullable=False),
+    sa.Column('jumlah', sa.Integer(), nullable=False),
+    sa.Column('status', sa.Enum('pending', 'lunas', name='status_enum'), nullable=True),
+    sa.Column('metode', sa.String(length=50), nullable=True),
+    sa.Column('tanggal_bayar', sa.DateTime(), nullable=True),
+    sa.Column('bukti_transfer', sa.String(length=255), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('peraturan',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -107,6 +119,7 @@ def downgrade():
 
     op.drop_table('users')
     op.drop_table('peraturan')
+    op.drop_table('pembayaran')
     op.drop_table('kamar')
     op.drop_table('jadwal')
     # ### end Alembic commands ###

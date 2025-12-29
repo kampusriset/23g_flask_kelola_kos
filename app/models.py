@@ -182,7 +182,6 @@ class Peraturan(db.Model):
 # =========================
 # JADWAL
 # =========================
-# Tambahkan di app/models.py
 class Jadwal(db.Model):
     __tablename__ = 'jadwal'
 
@@ -194,3 +193,23 @@ class Jadwal(db.Model):
 
     def __repr__(self):
         return f"<Jadwal {self.nama_kegiatan}>"
+    
+
+# =========================
+# PEMBAYARAN
+# =========================
+class Pembayaran(db.Model):
+    __tablename__ = 'pembayaran'
+
+    id = db.Column(db.Integer, primary_key=True)
+    penghuni_id = db.Column(db.Integer, nullable=False)
+    kamar_id = db.Column(db.Integer, nullable=False)
+    bulan = db.Column(db.String(20), nullable=False)
+    jumlah = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Enum('pending', 'lunas', name='status_enum'), default='pending')
+    metode = db.Column(db.String(50), nullable=True)
+    tanggal_bayar = db.Column(db.DateTime, nullable=True, default=None)
+    bukti_transfer = db.Column(db.String(255), nullable=True)
+
+    def __repr__(self):
+        return f"<Pembayaran {self.id} - {self.status} - {self.jumlah}>"
