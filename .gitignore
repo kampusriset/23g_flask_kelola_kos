@@ -204,11 +204,13 @@ cython_debug/
 # Marimo
 marimo/_static/
 marimo/_lsp/
-<<<<<<< HEAD
 __marimo__/
-=======
-__marimo__/
->>>>>>> c45845124ecc0a7a5ed82306e75ac24094626e71
 
 # Ignore Node.js modules
 node_modules/
+
+uploads/*
+!uploads/.gitkeep
+
+*.log
+flask_session/

@@ -1,6 +1,10 @@
-from flask import render_template, redirect, url_for, flash, abort, request
+import os
+from flask import render_template, redirect, request, url_for, flash, abort, current_app
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
+from app.utils.upload import save_image
+
 
 from app import db
 from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan
@@ -8,7 +12,7 @@ from app.utils.decorators import role_required
 from app.models import User, Peraturan, Pengumuman, Jadwal # Tambahkan Jadwal di import
 
 from . import admin_bp
-from .forms import PenghuniForm, PeraturanForm, PengumumanForm, KamarForm, JadwalForm
+from .forms import PenghuniForm, PeraturanForm, PengumumanForm, ProfileForm, KamarForm, JadwalForm
 from datetime import datetime
 
 # === ROUTE UNTUK TEST ===
@@ -29,6 +33,66 @@ def cek_halaman_tidak_ditemukan():
 def dashboard():
     return render_template(
         'dashboard_admin.html',
+        sidebar='partials/sidebar_admin.html',
+    )
+
+
+
+
+@admin_bp.route('/profile/photos', methods=['POST'])
+@login_required
+@role_required('admin')
+def update_profile_photos():
+
+    avatar = request.files.get('profile_photo')
+    bg = request.files.get('bg_profile_photo')
+
+    if avatar:
+        current_user.profile_photo = save_image(
+            file=avatar,
+            old_file=current_user.profile_photo,
+            folder='uploads/profile'
+        )
+
+    if bg:
+        current_user.bg_profile_photo = save_image(
+            file=bg,
+            old_file=current_user.bg_profile_photo,
+            folder='uploads/bg_profile'
+        )
+
+    if not avatar and not bg:
+        flash('Tidak ada file yang diunggah', 'error')
+        return redirect(url_for('admin.profile'))
+
+    db.session.commit()
+    flash('Foto profil berhasil diperbarui', 'success')
+    return redirect(url_for('admin.profile'))
+
+
+
+
+@admin_bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def profile():
+
+    form = ProfileForm(obj=current_user)
+
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+
+        if form.password.data:
+            current_user.set_password(form.password.data)
+
+        db.session.commit()
+        flash('Data akun berhasil diperbarui', 'success')
+        return redirect(url_for('admin.profile'))
+
+    return render_template(
+        'profile_admin.html',
+        form=form,
         sidebar='partials/sidebar_admin.html'
     )
 

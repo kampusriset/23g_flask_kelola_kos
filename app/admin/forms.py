@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField, SubmitField, IntegerField, SelectField
-from wtforms.validators import DataRequired, Email
-from wtforms import DateTimeLocalField
+from wtforms.validators import DataRequired, Email, Optional
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, TextAreaField, PasswordField, SubmitField, IntegerField, SelectField, DateTimeLocalField
+
 
 # =========================
 # Form Buat Penghuni
@@ -31,6 +32,29 @@ class PengumumanForm(FlaskForm):
 
 
 # =========================
+# Form Profile
+# =========================
+class ProfileForm(FlaskForm):
+    profile_photo = FileField('Foto Profil',
+        validators=[
+            Optional(),
+            FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Hanya file gambar yang diperbolehkan!')
+        ]
+    )
+    bg_profile_photo = FileField(
+        'Foto Latar Profil',
+        validators=[
+            Optional(),
+            FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Hanya file gambar yang diperbolehkan!')
+        ]
+    )
+    username = StringField('Username', validators=[DataRequired(message='Username wajib diisi')])
+    email = StringField('Email', validators=[Optional(), Email(message='Format email tidak valid')])
+    password = PasswordField('Password', validators=[Optional()])
+    submit = SubmitField('Update Profile')
+
+
+# =========================
 # Form Kamar (Admin)
 # =========================
 class KamarForm(FlaskForm):
@@ -42,6 +66,8 @@ class KamarForm(FlaskForm):
     keterangan = TextAreaField('Keterangan Tambahan')
     penghuni_id = SelectField('Penghuni (Opsional)', coerce=int, choices=[], default=0)
     submit = SubmitField('Simpan Kamar')
+
+
 # =========================
 # Form Jadwal
 # =========================
@@ -51,9 +77,11 @@ class JadwalForm(FlaskForm):
     lokasi = StringField('Lokasi (Opsional)')
     keterangan = TextAreaField('Detail Kegiatan')
     submit = SubmitField('Simpan Jadwal')
+
+
+# =========================  
 # Form Pengaduan
 # =========================
-# Tambahkan di app/admin/forms.py
 class TanggapanForm(FlaskForm):
     tanggapan = TextAreaField('Berikan Tanggapan', validators=[DataRequired()])
     submit = SubmitField('Kirim Tanggapan')

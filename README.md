@@ -24,9 +24,8 @@ CARA MENJALANKAN PROYEK
 
     Perintah:
     
-    npm install
-
-    npm run dev
+        npm install
+        npm run dev
 
 ----------------------------------------------------------------
 
@@ -34,11 +33,9 @@ CARA MENJALANKAN PROYEK
 
     Buat virtual environment dan install dependency:
 
-    python -m venv venv
-
-    venv\Scripts\activate
-    
-    pip install -r requirements.txt
+        python -m venv venv
+        venv\Scripts\activate
+        pip install -r requirements.txt
 
 ----------------------------------------------------------------
 
@@ -65,11 +62,11 @@ DATABASE BARU (KOSONG)
 
 1. Buat database kosong di MySQL / MariaDB:
 
-   mykost_db
+        mykost_db
 
 2. Jalankan migrasi database:
 
-   flask db upgrade
+        flask db upgrade
 
 Perintah ini akan membuat seluruh tabel berdasarkan
 migration yang sudah tersedia di project.
@@ -79,7 +76,7 @@ MEMBUAT DATA AWAL (SEED)
 
 Untuk membuat user default (admin & penghuni), jalankan:
 
-   python seed.py
+    python seed.py
 
 User default:
 - Admin     : admin / admin123
@@ -95,21 +92,21 @@ WORKFLOW PERUBAHAN DATABASE
 
 Setiap ada perubahan model:
 
-flask db migrate -m "deskripsi perubahan"
-flask db upgrade
+    flask db migrate -m "deskripsi perubahan"
+    flask db upgrade
 
 Rollback jika diperlukan:
 
-flask db downgrade
+    flask db downgrade
 
 ----------------------------------------------------------------
 
 MENJALANKAN APLIKASI
 
-flask run
+    flask run
 
 Akses aplikasi melalui browser:
-http://127.0.0.1:5000
+    http://127.0.0.1:5000
 
 ----------------------------------------------------------------
 
@@ -149,12 +146,11 @@ CATATAN PENTING
 - Folder berikut TIDAK BOLEH di-commit ke GitHub:
   venv/
   .env
+  node_modules/
   __pycache__/
   database lokal
 
-- File setup_db.sql hanya digunakan untuk setup awal database kosong
 - Semua perubahan schema database HARUS lewat Flask-Migrate
-- Jangan menjalankan setup_database.py di production
 
 ----------------------------------------------------------------
 
@@ -164,13 +160,20 @@ ADMIN:
 - Mengelola kamar
 - Mengelola penghuni
 - Mengelola pengumuman
+- Mengelola peraturan
+- Mengelola jadwal
 - Melihat dan memvalidasi pembayaran
+- Melihat profil
+- Melihat pengaduan
 
 PENGHUNI:
 - Melihat data kamar
 - Melakukan pembayaran
 - Mengirim pengaduan
 - Melihat pengumuman
+- Melihat jadwal
+- Melihat peraturan
+- Melihat profil
 
 ----------------------------------------------------------------
 
