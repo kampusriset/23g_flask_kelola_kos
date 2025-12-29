@@ -19,21 +19,26 @@ TECH STACK
 CARA MENJALANKAN PROYEK
 
 1. FRONTEND (TailwindCSS)
-Pastikan Node.js sudah terinstall.
+    
+    Pastikan Node.js sudah terinstall.
 
-Perintah:
-npm install
-npm run dev
+    Perintah:
+    
+    npm install
+
+    npm run dev
 
 ----------------------------------------------------------------
 
 2. BACKEND (Flask)
 
-Buat virtual environment dan install dependency:
+    Buat virtual environment dan install dependency:
 
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
+    python -m venv venv
+
+    venv\Scripts\activate
+    
+    pip install -r requirements.txt
 
 ----------------------------------------------------------------
 
@@ -41,10 +46,10 @@ KONFIGURASI APLIKASI
 
 Edit file app/config.py:
 
-class Config:
-    SECRET_KEY = 'mykost-secret-key'
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost:3306/mykost_db'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    class Config:
+        SECRET_KEY = 'mykost-secret-key'
+        SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost:3306/mykost_db'
+        SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 Pastikan database mykost_db sudah dibuat di MySQL/MariaDB.
 
@@ -111,19 +116,34 @@ http://127.0.0.1:5000
 STRUKTUR FOLDER (RINGKAS)
 
 MyKost/
+
+
 ├── app/
+
 │   ├── models/
+
 │   ├── routes/
+
 │   ├── templates/
+
 │   ├── static/
+
 │   └── config.py
+
 ├── migrations/
+
 │   └── versions/
+
 ├── sql/
+
 │   └── setup_db.sql
+
 ├── setup_database.py
+
 ├── requirements.txt
+
 ├── README.md
+
 └── .gitignore
 
 ----------------------------------------------------------------
@@ -174,6 +194,5 @@ Fitur utama:
 
 LISENSI
 
-Project ini dibuat untuk keperluan pembelajaran dan pengembangan internal.
+MIT License
 
-Aplikasi siap digunakan.
