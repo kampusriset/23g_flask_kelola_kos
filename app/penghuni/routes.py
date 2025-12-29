@@ -1,9 +1,10 @@
+from datetime import datetime
 from flask import render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app import db
 
+from app.models import Pengumuman, Peraturan, Jadwal, Pengaduan
 from .forms import PengaduanForm
-from app.models import Pengumuman, Peraturan,  Pengaduan
 from app.utils.decorators import role_required
 
 
@@ -51,6 +52,13 @@ def peraturan():
         semua_peraturan=semua_peraturan
     )
 
+@penghuni_bp.route('/jadwal')
+@login_required
+@role_required('penghuni')
+def jadwal():
+    # Menampilkan jadwal dari yang terdekat
+    semua_jadwal = Jadwal.query.filter(Jadwal.tanggal_mulai >= datetime.utcnow()).order_by(Jadwal.tanggal_mulai.asc()).all()
+    return render_template('jadwal_penghuni.html', sidebar='partials/sidebar_penghuni.html', semua_jadwal=semua_jadwal)
 @penghuni_bp.route('/pengaduan', methods=['GET', 'POST'])
 @login_required
 @role_required('penghuni')

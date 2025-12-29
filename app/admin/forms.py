@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email
+from wtforms import DateTimeLocalField
 
 # =========================
 # Form Buat Penghuni
@@ -29,6 +30,14 @@ class PengumumanForm(FlaskForm):
     submit = SubmitField('Tambah Pengumuman')
 
 # =========================
+# Form Jadwal
+# =========================
+class JadwalForm(FlaskForm):
+    nama_kegiatan = StringField('Nama Kegiatan', validators=[DataRequired()])
+    tanggal_mulai = DateTimeLocalField('Waktu Mulai', format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
+    lokasi = StringField('Lokasi (Opsional)')
+    keterangan = TextAreaField('Detail Kegiatan')
+    submit = SubmitField('Simpan Jadwal')
 # Form Pengaduan
 # =========================
 # Tambahkan di app/admin/forms.py

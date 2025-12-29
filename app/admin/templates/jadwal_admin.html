@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Manajemen Jadwal Kos</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Kelola agenda rutin di satu halaman.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 sticky top-24 transition-all {{ 'ring-2 ring-yellow-400 border-yellow-200' if edit_mode }}">
+                <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    {% if edit_mode %}
+                        <i data-feather="edit-3" class="w-5 h-5 text-yellow-500"></i> Edit Agenda
+                    {% else %}
+                        <i data-feather="plus-square" class="w-5 h-5 text-blue-500"></i> Tambah Agenda
+                    {% endif %}
+                </h2>
+                
+                <form method="POST" action="{{ url_for('admin.jadwal', id=jadwal_edit.id) if edit_mode else url_for('admin.jadwal') }}" class="space-y-4">
+                    {{ form.hidden_tag() }}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nama Kegiatan</label>
+                        {{ form.nama_kegiatan(class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 dark:text-white outline-none focus:ring-2 focus:ring-blue-500") }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Waktu Pelaksanaan</label>
+                        {{ form.tanggal_mulai(class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 dark:text-white outline-none focus:ring-2 focus:ring-blue-500") }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Lokasi</label>
+                        {{ form.lokasi(class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 dark:text-white outline-none focus:ring-2 focus:ring-blue-500") }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Keterangan</label>
+                        {{ form.keterangan(rows=3, class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 resize-none") }}
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="submit" class="flex-1 py-3 {{ 'bg-yellow-500 hover:bg-yellow-600' if edit_mode else 'bg-blue-600 hover:bg-blue-700' }} text-white rounded-xl font-bold shadow-md transform active:scale-95 transition-all cursor-pointer">
+                            {{ 'Simpan Perubahan' if edit_mode else 'Posting Jadwal' }}
+                        </button>
+                        {% if edit_mode %}
+                        <a href="{{ url_for('admin.jadwal') }}" class="px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-300 transition text-center">Batal</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-4">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <i data-feather="list" class="w-5 h-5 text-blue-500"></i> Agenda Aktif
+            </h2>
+            {% if semua_jadwal %}
+                <div class="grid gap-4">
+                {% for j in semua_jadwal %}
+                    <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border transition shadow-sm flex justify-between items-center {{ 'border-yellow-400 bg-yellow-50 dark:bg-yellow-900/10' if edit_mode and jadwal_edit.id == j.id else 'border-gray-100 dark:border-gray-700' }}">
+                        <div class="flex gap-4 items-center">
+                            <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-xl text-blue-600 dark:text-blue-400 text-center min-w-[70px]">
+                                <span class="block text-xs font-bold uppercase">{{ j.tanggal_mulai.strftime('%b') }}</span>
+                                <span class="block text-xl font-black">{{ j.tanggal_mulai.strftime('%d') }}</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 dark:text-white">{{ j.nama_kegiatan }}</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ j.tanggal_mulai.strftime('%H:%M WIB') }} | {{ j.lokasi if j.lokasi else 'Lokasi tidak ditentukan' }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <a href="{{ url_for('admin.jadwal', id=j.id) }}" class="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition">
+                                <i data-feather="edit-2" class="w-4 h-4"></i>
+                            </a>
+                            <form action="{{ url_for('admin.hapus_jadwal', id=j.id) }}" method="POST" onsubmit="return confirm('Hapus jadwal ini?')">
+                                <button type="submit" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
+                                    <i data-feather="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                {% endif %}
+        </div>
+    </div>
+</div>
+<script>feather.replace();</script>
+{% endblock %}
