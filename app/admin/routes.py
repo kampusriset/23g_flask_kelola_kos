@@ -3,11 +3,12 @@ from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 
 from app import db
-from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni
+from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan
 from app.utils.decorators import role_required
+from app.models import User, Peraturan, Pengumuman, Jadwal # Tambahkan Jadwal di import
 
 from . import admin_bp
-from .forms import PenghuniForm, PeraturanForm, PengumumanForm, KamarForm
+from .forms import PenghuniForm, PeraturanForm, PengumumanForm, KamarForm, JadwalForm
 from datetime import datetime
 
 # === ROUTE UNTUK TEST ===
@@ -279,3 +280,80 @@ def hapus_kamar(id):
     db.session.commit()
     flash('Kamar berhasil dihapus.', 'success')
     return redirect(url_for('admin.kelola_kamar'))
+@admin_bp.route('/jadwal', methods=['GET', 'POST'])
+@admin_bp.route('/jadwal/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def jadwal(id=None):
+    jadwal_edit = None
+    edit_mode = False
+    
+    if id:
+        jadwal_edit = Jadwal.query.get_or_404(id)
+        edit_mode = True
+        form = JadwalForm(obj=jadwal_edit)
+    else:
+        form = JadwalForm()
+
+    if form.validate_on_submit():
+        if edit_mode:
+            jadwal_edit.nama_kegiatan = form.nama_kegiatan.data
+            jadwal_edit.tanggal_mulai = form.tanggal_mulai.data
+            jadwal_edit.lokasi = form.lokasi.data
+            jadwal_edit.keterangan = form.keterangan.data
+            flash('Jadwal berhasil diperbarui!', 'success')
+        else:
+            baru = Jadwal(
+                nama_kegiatan=form.nama_kegiatan.data,
+                tanggal_mulai=form.tanggal_mulai.data,
+                lokasi=form.lokasi.data,
+                keterangan=form.keterangan.data
+            )
+            db.session.add(baru)
+            flash('Jadwal berhasil ditambahkan!', 'success')
+        
+        db.session.commit()
+        return redirect(url_for('admin.jadwal'))
+
+    semua_jadwal = Jadwal.query.order_by(Jadwal.tanggal_mulai.asc()).all()
+    return render_template(
+        'jadwal_admin.html', 
+        sidebar='partials/sidebar_admin.html', 
+        form=form, 
+        semua_jadwal=semua_jadwal,
+        edit_mode=edit_mode,
+        jadwal_edit=jadwal_edit
+    )
+
+@admin_bp.route('/jadwal/hapus/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def hapus_jadwal(id):
+    item = Jadwal.query.get_or_404(id)
+    db.session.delete(item)
+    db.session.commit()
+    flash('Jadwal dihapus.', 'success')
+    return redirect(url_for('admin.jadwal'))
+@admin_bp.route('/pengaduan', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def daftar_pengaduan():
+    laporan_masuk = Pengaduan.query.order_by(Pengaduan.tanggal.desc()).all()
+    return render_template(
+        'pengaduan_admin.html',
+        sidebar='partials/sidebar_admin.html',
+        laporan_masuk=laporan_masuk
+    )
+
+@admin_bp.route('/pengaduan/tanggapi/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def tanggapi_pengaduan(id):
+    laporan = Pengaduan.query.get_or_404(id)
+    tanggapan = request.form.get('tanggapan')
+    if tanggapan:
+        laporan.tanggapan = tanggapan
+        laporan.status = 'selesai' # Ubah status dari menunggu ke selesai
+        db.session.commit()
+        flash('Berhasil memberikan tanggapan!', 'success')
+    return redirect(url_for('admin.daftar_pengaduan'))
