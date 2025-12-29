@@ -27,3 +27,11 @@ class PengumumanForm(FlaskForm):
     judul = StringField('Judul Pengumuman', validators=[DataRequired()])
     isi = TextAreaField('Isi Pengumuman', validators=[DataRequired()])
     submit = SubmitField('Tambah Pengumuman')
+
+# =========================
+# Form Pengaduan
+# =========================
+# Tambahkan di app/admin/forms.py
+class TanggapanForm(FlaskForm):
+    tanggapan = TextAreaField('Berikan Tanggapan', validators=[DataRequired()])
+    submit = SubmitField('Kirim Tanggapan')
