@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>500 - Kesalahan Server</title>
+
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/logo.svg') }}">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
+
+  <script>
+    if (localStorage.theme === 'dark' ||
+        (!('theme' in localStorage) &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-300 font-sans">
+
+  <div class="text-center max-w-lg w-full">
+
+    <div class="inline-flex items-center justify-center w-24 h-24 mb-6 bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-full shadow-sm animate-pulse">
+      <i data-feather="alert-triangle" class="w-10 h-10"></i>
+    </div>
+
+    <h1 class="text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2">500</h1>
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+      Kesalahan Server
+    </h2>
+
+    <p class="text-gray-500 dark:text-gray-400 mb-8 text-lg leading-relaxed">
+      Maaf, terjadi kesalahan pada server kami.<br>
+      Silakan coba lagi nanti atau hubungi Administrator.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="{{ url_for('admin.dashboard') if 'admin.dashboard' in url_for.globals else '/' }}"
+         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-1">
+        <i data-feather="home" class="w-4 h-4"></i>
+        Kembali ke Dashboard
+      </a>
+
+      <a href="{{ request.path }}"
+         class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold transition">
+        <i data-feather="refresh-cw" class="w-4 h-4"></i>
+        Muat Ulang
+      </a>
+    </div>
+
+  </div>
+
+  <div class="fixed bottom-6 text-center text-xs text-gray-400 dark:text-gray-600">
+    &copy; MyKost Application System
+  </div>
+
+  <script>
+    feather.replace();
+  </script>
+</body>
+</html>

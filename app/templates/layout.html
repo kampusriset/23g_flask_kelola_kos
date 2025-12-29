@@ -73,7 +73,9 @@
           </button>
 
           <div class="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 dark:border-gray-600 overflow-hidden">
-            <img src="https://ui-avatars.com/api/?name=User&background=random" alt="Profil">
+            <a href="{{ url_for('admin.profile') }}">
+              <img src="{{ url_for('static', filename=current_user.profile_photo if current_user.profile_photo else 'img/default-avatar.jpeg') }}" alt="Profile">
+            </a>
           </div>
         </div>
       </header>

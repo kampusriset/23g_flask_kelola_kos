@@ -9,14 +9,20 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True)
+    username = db.Column(db.String(100), unique=True, nullable=False, index=True)
+    email = db.Column(db.String(100), unique=True, index=True)
     password = db.Column(db.String(255), nullable=False)
+
     role = db.Column(
         db.Enum('admin', 'penghuni'),
         default='penghuni',
         nullable=False
     )
+
+    # NULL = belum upload foto
+    profile_photo = db.Column(db.String(255), nullable=True)
+    bg_profile_photo = db.Column(db.String(255), nullable=True)
+
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime,
@@ -24,8 +30,13 @@ class User(UserMixin, db.Model):
         onupdate=datetime.utcnow
     )
 
+    def is_admin(self):
+        return self.role == 'admin'
+
     def __repr__(self):
         return f"<User {self.username}>"
+
+
 
 # =========================
 # KAMAR
@@ -167,3 +178,19 @@ class Peraturan(db.Model):
 
     def __repr__(self):
         return f"<Peraturan {self.id}>"
+
+# =========================
+# JADWAL
+# =========================
+# Tambahkan di app/models.py
+class Jadwal(db.Model):
+    __tablename__ = 'jadwal'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nama_kegiatan = db.Column(db.String(200), nullable=False)
+    tanggal_mulai = db.Column(db.DateTime, nullable=False)
+    lokasi = db.Column(db.String(200))
+    keterangan = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<Jadwal {self.nama_kegiatan}>"

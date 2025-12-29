@@ -48,7 +48,7 @@
   </nav>
 
   <div class="p-4 border-t border-gray-100 dark:border-gray-700 space-y-1">
-    <a href="#"
+    <a href="{{ url_for('admin.profile') }}"
       class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
       <i data-feather="user" class="w-5 h-5"></i> <span>Profile</span>
     </a>
@@ -98,7 +98,7 @@
 
     <a href="#" class="flex items-center gap-3 px-4 py-3 transition">
       <div class="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 dark:border-gray-600 overflow-hidden">
-        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="Profil">
+        <img src="{{ url_for('static', filename=current_user.profile_photo if current_user.profile_photo else 'img/default-avatar.jpeg') }}" alt="Profile">
       </div>
       <span class="font-xl font-bold">Profile</span>
     </a>

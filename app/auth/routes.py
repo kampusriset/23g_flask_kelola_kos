@@ -1,19 +1,19 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db
 from app.models import User
 from . import auth_bp
-from .forms import LoginForm
-from .forms import RegisterForm
+from .forms import LoginForm, RegisterForm
 
+# ================= LOGIN =================
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and check_password_hash(user.password, form.password.data):
-            login_user(user)
+            login_user(user, remember=False)
             flash('Login berhasil!', 'success')
 
             # Redirect sesuai role
@@ -25,19 +25,18 @@ def login():
             flash('Username atau password salah', 'danger')
     return render_template('login.html', form=form)
 
+# ================= REGISTER =================
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
         # cek apakah username sudah ada
-        existing_user_username = User.query.filter_by(username=form.username.data).first()
-        if existing_user_username:
+        if User.query.filter_by(username=form.username.data).first():
             flash('Username sudah digunakan.', 'danger')
             return render_template('register.html', form=form)
 
         # cek apakah email sudah ada
-        existing_user_email = User.query.filter_by(email=form.email.data).first()
-        if existing_user_email:
+        if User.query.filter_by(email=form.email.data).first():
             flash('Email sudah terdaftar.', 'danger')
             return render_template('register.html', form=form)
 
@@ -47,7 +46,7 @@ def register():
                 username=form.username.data,
                 email=form.email.data,
                 password=hashed_pw,
-                role='admin'   # penting: set role admin
+                role='admin'  # set role admin
             )
             db.session.add(new_admin)
             db.session.commit()
@@ -59,9 +58,13 @@ def register():
 
     return render_template('register.html', form=form)
 
+# ================= LOGOUT =================
 @auth_bp.route('/logout')
 @login_required
 def logout():
     logout_user()
+    session.clear()
+    resp = redirect(url_for('auth.login'))
+    resp.delete_cookie('remember_token')
     flash('Anda telah logout.', 'info')
-    return redirect(url_for('auth.login'))
+    return resp
