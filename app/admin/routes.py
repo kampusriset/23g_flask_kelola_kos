@@ -7,7 +7,7 @@ from app.utils.upload import save_image
 
 
 from app import db
-from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan
+from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan, Payment
 from app.utils.decorators import role_required
 from app.models import User, Peraturan, Pengumuman, Jadwal # Tambahkan Jadwal di import
 
@@ -421,3 +421,16 @@ def tanggapi_pengaduan(id):
         db.session.commit()
         flash('Berhasil memberikan tanggapan!', 'success')
     return redirect(url_for('admin.daftar_pengaduan'))
+
+@admin_bp.route('/admin/pembayaran', methods=['GET', 'POST'])
+@login_required
+def admin_pembayaran():
+    payments = Payment.query.all()
+    if request.method == 'POST':
+        payment_id = request.form['payment_id']
+        payment = Payment.query.get(payment_id)
+        payment.status = True
+        db.session.commit()
+        flash("Pembayaran sudah diverifikasi.", "success")
+        return redirect(url_for('admin_pembayaran'))
+    return render_template('admin_pembayaran.html', payments=payments)

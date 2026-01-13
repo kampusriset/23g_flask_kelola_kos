@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField, SubmitField
+from wtforms import SelectField, StringField, TextAreaField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Optional
 from flask_wtf.file import FileField, FileAllowed
 
@@ -34,3 +34,22 @@ class ProfileForm(FlaskForm):
     email = StringField('Email', validators=[Optional(), Email(message='Format email tidak valid')])
     password = PasswordField('Password', validators=[Optional()])
     submit = SubmitField('Update Profile')
+
+    # =========================  
+# Form Pengaduan
+# =========================
+class TanggapanForm(FlaskForm):
+    tanggapan = TextAreaField('Berikan Tanggapan', validators=[DataRequired()])
+    submit = SubmitField('Kirim Tanggapan')
+
+    # =========================
+    # Form Pembayaran
+    # =========================
+    class PaymentForm(FlaskForm):
+        metode = SelectField(
+            'Metode Pembayaran',
+            choices=[('cash', 'Cash'), ('transfer', 'Transfer')],
+            validators=[DataRequired()]
+        )
+        bank = StringField('Bank (Opsional)', validators=[Optional()])
+        submit = SubmitField('Konfirmasi Pembayaran')

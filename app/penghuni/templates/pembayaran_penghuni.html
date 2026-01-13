@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}Pembayaran Penghuni{% endblock %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">Pembayaran</h2>
+<p class="text-gray-600 dark:text-gray-400 mb-6">Silakan pilih metode pembayaran yang kamu gunakan.</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  <!-- Cash -->
+  <div class="border rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm">
+    <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Bayar Tunai (Cash)</h3>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Bayar langsung ke admin kos saat bertemu.</p>
+    <form method="POST" action="{{ url_for('penghuni.pembayaran') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="metode" value="Cash">
+      <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transform active:scale-95 transition-all duration-200 cursor-pointer">
+        Konfirmasi Pembayaran
+      </button>
+    </form>
+  </div>
+
+  <!-- Transfer Bank -->
+  <div class="border rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm">
+    <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Transfer Bank</h3>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Transfer ke salah satu rekening berikut:</p>
+    <ul class="text-sm text-gray-700 dark:text-gray-300 mb-4 space-y-2">
+      <li>🏦 BCA - 1234567890 a.n. Kos Kita</li>
+      <li>🏦 Mandiri - 9876543210 a.n. Kos Kita</li>
+      <li>🏦 BNI - 1122334455 a.n. Kos Kita</li>
+    </ul>
+    <form method="POST" action="{{ url_for('penghuni.pembayaran') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="metode" value="Transfer">
+      <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Bank yang digunakan:</label>
+      <select name="bank" class="w-full border rounded px-3 py-2 mb-4 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+        <option value="BCA">BCA</option>
+        <option value="Mandiri">Mandiri</option>
+        <option value="BNI">BNI</option>
+      </select>
+      <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transform active:scale-95 transition-all duration-200 cursor-pointer">
+        Konfirmasi Pembayaran
+      </button>
+    </form>
+  </div>
+</div>
+
+<h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Riwayat Pembayaran</h3>
+
+{% if payments %}
+<table class="table-auto border-collapse border border-gray-300 dark:border-gray-700 w-full mb-10">
+  <thead class="bg-gray-100 dark:bg-gray-800">
+    <tr>
+      <th class="border px-4 py-2 text-gray-700 dark:text-gray-300">ID</th>
+      <th class="border px-4 py-2 text-gray-700 dark:text-gray-300">Metode</th>
+      <th class="border px-4 py-2 text-gray-700 dark:text-gray-300">Bank</th>
+      <th class="border px-4 py-2 text-gray-700 dark:text-gray-300">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in payments %}
+    <tr class="bg-white dark:bg-gray-900">
+      <td class="border px-4 py-2 text-gray-800 dark:text-gray-200">{{ p.id }}</td>
+      <td class="border px-4 py-2 text-gray-800 dark:text-gray-200">{{ p.metode }}</td>
+      <td class="border px-4 py-2 text-gray-800 dark:text-gray-200">{{ p.bank or '-' }}</td>
+      <td class="border px-4 py-2 text-gray-800 dark:text-gray-200">
+        {{ 'Sudah Diverifikasi' if p.status else 'Belum' }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-gray-500 dark:text-gray-400">Belum ada pembayaran yang tercatat.</p>
+{% endif %}
+{% endblock %}

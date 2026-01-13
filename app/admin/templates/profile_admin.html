@@ -134,6 +134,7 @@
 
                 <form method="POST" enctype="multipart/form-data" class="space-y-5">
                     {{ form.hidden_tag() }}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                     <div>
                         {{ form.username.label(class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2") }}
