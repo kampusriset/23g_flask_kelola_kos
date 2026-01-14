@@ -420,9 +420,6 @@
   .inline-flex {
     display: inline-flex;
   }
-  .table {
-    display: table;
-  }
   .h-2 {
     height: calc(var(--spacing) * 2);
   }
@@ -823,6 +820,9 @@
   }
   .bg-green-500 {
     background-color: var(--color-green-500);
+  }
+  .bg-green-600 {
+    background-color: var(--color-green-600);
   }
   .bg-indigo-100 {
     background-color: var(--color-indigo-100);
@@ -1358,6 +1358,13 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-gray-700);
+      }
+    }
+  }
+  .hover\:bg-green-700 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-green-700);
       }
     }
   }

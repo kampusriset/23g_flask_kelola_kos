@@ -48,12 +48,16 @@
           <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Kelola Kamar</span>
       </a>
 
-      <a href="#" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-orange-100 dark:bg-orange-900/40 p-4 rounded-full text-orange-600 dark:text-orange-400 group-hover:scale-110 transition duration-300">
-              <i data-feather="credit-card" class="w-6 h-6"></i>
-          </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-orange-600 dark:group-hover:text-orange-400">Pembayaran</span>
-      </a>
+      <a href="{{ url_for('admin.pembayaran') }}"
+   class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+    <div class="bg-orange-100 dark:bg-orange-900/40 p-4 rounded-full text-orange-600 dark:text-orange-400 group-hover:scale-110 transition duration-300">
+        <i data-feather="credit-card" class="w-6 h-6"></i>
+    </div>
+    <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-orange-600 dark:group-hover:text-orange-400">
+        Pembayaran
+    </span>
+    </a>
+
 
       <a href="{{ url_for('admin.pengumuman') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
           <div class="bg-purple-100 dark:bg-purple-900/40 p-4 rounded-full text-purple-600 dark:text-purple-400 group-hover:scale-110 transition duration-300">

@@ -1,41 +1,45 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 
 {% block title %}Admin Pembayaran{% endblock %}
 
 {% block content %}
-<h2>Daftar Pembayaran Penghuni</h2>
+<h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">Daftar Pembayaran Penghuni</h2>
 
-<table class="table" border="1" cellpadding="8" cellspacing="0">
-    <thead>
+<table class="table-auto border-collapse border border-gray-300 dark:border-gray-700 w-full mb-10">
+    <thead class="bg-gray-100 dark:bg-gray-800">
         <tr>
-            <th>ID</th>
-            <th>Penghuni</th>
-            <th>Metode</th>
-            <th>Bank</th>
-            <th>Status</th>
-            <th>Aksi</th>
+            <th class="border px-4 py-2">ID</th>
+            <th class="border px-4 py-2">Penghuni</th>
+            <th class="border px-4 py-2">Metode</th>
+            <th class="border px-4 py-2">Bank</th>
+            <th class="border px-4 py-2">Status</th>
+            <th class="border px-4 py-2">Aksi</th>
         </tr>
     </thead>
     <tbody>
         {% for p in payments %}
-        <tr>
-            <td>{{ p.id }}</td>
-            <td>{{ p.user.username }}</td>
-            <td>{{ p.metode }}</td>
-            <td>{{ p.bank or '-' }}</td>
-            <td>
+        <tr class="bg-white dark:bg-gray-900">
+            <td class="border px-4 py-2">{{ p.id }}</td>
+            <td class="border px-4 py-2">{{ p.user.username }}</td>
+            <td class="border px-4 py-2">{{ p.metode }}</td>
+            <td class="border px-4 py-2">{{ p.bank or '-' }}</td>
+            <td class="border px-4 py-2">
                 {% if p.status %}
                     ✅ Sudah Diverifikasi
                 {% else %}
                     ❌ Belum
                 {% endif %}
             </td>
-            <td>
+            <td class="border px-4 py-2">
                 {% if not p.status %}
-                <form method="POST" action="{{ url_for('admin.admin_pembayaran') }}">
-                    <input type="hidden" name="payment_id" value="{{ p.id }}">
-                    <button type="submit">Checklist</button>
-                </form>
+                <form method="POST" action="{{ url_for('admin.pembayaran') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="payment_id" value="{{ p.id }}">
+    <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+        Checklist
+    </button>
+    </form>
+
                 {% endif %}
             </td>
         </tr>
