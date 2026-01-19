@@ -79,9 +79,3 @@ class JadwalForm(FlaskForm):
     submit = SubmitField('Simpan Jadwal')
 
 
-# =========================  
-# Form Pengaduan
-# =========================
-class TanggapanForm(FlaskForm):
-    tanggapan = TextAreaField('Berikan Tanggapan', validators=[DataRequired()])
-    submit = SubmitField('Kirim Tanggapan')

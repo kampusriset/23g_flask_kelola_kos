@@ -30,7 +30,7 @@
       <i data-feather="user-plus" class="w-5 h-5"></i> <span>Buat Penghuni</span>
     </a>
 
-    <a href="#"
+    <a href="{{ url_for('admin.pembayaran') }}"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pembayaran' else nav_inactive }}">
       <i data-feather="credit-card" class="w-5 h-5"></i> <span>Pembayaran</span>
     </a>

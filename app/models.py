@@ -5,24 +5,29 @@ from datetime import datetime
 # =========================
 # USER (LOGIN)
 # =========================
-class User(UserMixin, db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False, index=True)
-    email = db.Column(db.String(100), unique=True, index=True)
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password = db.Column(db.String(255), nullable=False)
 
+    # role admin/penghuni
     role = db.Column(
         db.Enum('admin', 'penghuni'),
         default='penghuni',
         nullable=False
     )
 
-    # NULL = belum upload foto
+    # relasi ke Payment
+    payments = db.relationship('Payment', backref='user', lazy=True)
+
+    # foto profil opsional
     profile_photo = db.Column(db.String(255), nullable=True)
     bg_profile_photo = db.Column(db.String(255), nullable=True)
 
+    # timestamp
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime,
@@ -213,3 +218,18 @@ class Pembayaran(db.Model):
 
     def __repr__(self):
         return f"<Pembayaran {self.id} - {self.status} - {self.jumlah}>"
+
+    #menu pembayaran dzaki
+class Payment(db.Model):
+    __tablename__ = 'payments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    metode = db.Column(db.String(20), nullable=False)   # cash / transfer
+    bank = db.Column(db.String(50), nullable=True)      # jika transfer
+    status = db.Column(db.Boolean, default=False)       # checklist admin
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Payment {self.id} - {self.metode} - {self.status}>"

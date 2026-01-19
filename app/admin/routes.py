@@ -7,7 +7,7 @@ from app.utils.upload import save_image
 
 
 from app import db
-from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan
+from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan, Payment
 from app.utils.decorators import role_required
 from app.models import User, Peraturan, Pengumuman, Jadwal # Tambahkan Jadwal di import
 
@@ -344,6 +344,8 @@ def hapus_kamar(id):
     db.session.commit()
     flash('Kamar berhasil dihapus.', 'success')
     return redirect(url_for('admin.kelola_kamar'))
+
+
 @admin_bp.route('/jadwal', methods=['GET', 'POST'])
 @admin_bp.route('/jadwal/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -421,3 +423,28 @@ def tanggapi_pengaduan(id):
         db.session.commit()
         flash('Berhasil memberikan tanggapan!', 'success')
     return redirect(url_for('admin.daftar_pengaduan'))
+
+
+
+@admin_bp.route('/pembayaran', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def pembayaran():
+    payments = Payment.query.all()
+
+    if request.method == 'POST':
+        payment_id = request.form.get('payment_id')
+        payment = Payment.query.get(payment_id)
+
+        if payment:
+            payment.status = True
+            db.session.commit()
+            flash("Pembayaran sudah diverifikasi.", "success")
+        else:
+            flash("Pembayaran tidak ditemukan.", "warning")
+
+        return redirect(url_for('admin.pembayaran'))
+
+    return render_template('pembayaran_admin.html', 
+                           payments=payments,
+                           sidebar='partials/sidebar_admin.html',)

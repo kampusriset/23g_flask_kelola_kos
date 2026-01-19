@@ -3,7 +3,7 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_required, current_user
 from app import db
 
-from app.models import Pengumuman, Peraturan, Jadwal, Pengaduan
+from app.models import Pengumuman, Peraturan, Jadwal, Pengaduan, Payment
 from app.utils.upload import save_image
 from .forms import PengaduanForm, ProfileForm
 from app.utils.decorators import role_required
@@ -158,3 +158,42 @@ def profile():
         form=form,
         sidebar='partials/sidebar_penghuni.html'
     )
+
+
+#pembayarandzaki
+
+@penghuni_bp.route('/pembayaran', methods=['GET', 'POST'])
+@login_required
+def pembayaran():
+    if request.method == 'POST':
+        metode = request.form.get('metode')   # ambil dari form
+        bank = request.form.get('bank')       # hanya ada kalau metode Transfer
+
+        # kalau form lama (konfirmasi existing payment)
+        payment_id = request.form.get('payment_id')
+        if payment_id:
+            payment = Payment.query.get(payment_id)
+            if payment and payment.user_id == current_user.id:
+                payment.status = True
+                db.session.commit()
+                flash("Pembayaran berhasil dikonfirmasi.", "success")
+            return redirect(url_for('penghuni.pembayaran'))
+
+        # kalau form baru (Cash / Transfer)
+        new_payment = Payment(
+            user_id=current_user.id,
+            metode=metode,
+            bank=bank,
+            status=False   # default belum diverifikasi
+        )
+        db.session.add(new_payment)
+        db.session.commit()
+        flash("Pembayaran berhasil ditambahkan.", "success")
+        return redirect(url_for('penghuni.pembayaran'))
+
+    # tampilkan semua pembayaran user
+    payments = Payment.query.filter_by(user_id=current_user.id).all()
+    return render_template('pembayaran_penghuni.html', 
+                           payments=payments,
+                           sidebar='partials/sidebar_penghuni.html'
+                           )
