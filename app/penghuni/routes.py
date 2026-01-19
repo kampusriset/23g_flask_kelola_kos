@@ -241,4 +241,5 @@ def pembayaran():
 
     return render_template('pembayaran_penghuni.html', 
                            form=form, 
+                           sidebar='partials/sidebar_penghuni.html',
                            pembayaran=data_pembayaran)
