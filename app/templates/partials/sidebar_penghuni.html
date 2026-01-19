@@ -25,7 +25,7 @@
       <i data-feather="key" class="w-5 h-5"></i> <span>Kamar</span>
     </a>
 
-    <a href="#"
+    <a href="{{ url_for('penghuni.pembayaran') }}"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.pembayaran' else nav_inactive }}">
       <i data-feather="credit-card" class="w-5 h-5"></i> <span>Pembayaran</span>
     </a>
@@ -71,6 +71,11 @@
     <i data-feather="key" class="w-6 h-6"></i>
     <span class="text-[10px] font-medium">Kamar</span>
   </a>
+  <a href="{{ url_for('penghuni.pembayaran') }}"
+    class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'penghuni.pembayaran' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
+    <i data-feather="credit-card" class="w-6 h-6"></i>
+    <span class="text-[10px] font-medium">Pembayaran</span>
+  </a>
   <a href="{{ url_for('penghuni.peraturan') }}"
     class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'penghuni.peraturan' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
     <i data-feather="list" class="w-6 h-6"></i>
@@ -111,10 +116,10 @@
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.jadwal' else nav_inactive }}">
       <i data-feather="calendar" class="w-4 h-4"></i> Jadwal
     </a>
-    <a href="#"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.create_penghuni' else nav_inactive }}">
-      <i data-feather="credit-card" class="w-4 h-4"></i> Pembayaran
-    </a>
+    <a href="{{ url_for('penghuni.pembayaran') }}"
+   class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.pembayaran' else nav_inactive }}">
+   <i data-feather="credit-card" class="w-4 h-4"></i> Pembayaran
+</a>
     <a href="#"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
       <i data-feather="archive" class="w-4 h-4"></i> Pengaduan

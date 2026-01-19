@@ -1,11 +1,14 @@
 from datetime import datetime
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, current_app
+import os
+from werkzeug.utils import secure_filename
 from flask_login import login_required, current_user
 from app import db
+import uuid
 
-from app.models import Pengumuman, Peraturan, Jadwal, Pengaduan
+from app.models import Pengumuman, Peraturan, Jadwal, Pengaduan, Pembayaran
 from app.utils.upload import save_image
-from .forms import PengaduanForm, ProfileForm
+from .forms import PengaduanForm, ProfileForm, PembayaranForm
 from app.utils.decorators import role_required
 
 
@@ -158,3 +161,85 @@ def profile():
         form=form,
         sidebar='partials/sidebar_penghuni.html'
     )
+
+
+
+
+@penghuni_bp.route('/pembayaran', methods=['GET', 'POST'])
+@login_required
+def pembayaran():
+    form = PembayaranForm()
+
+    if form.validate_on_submit():
+        filename = None
+        metode_pilihan = form.metode.data
+        
+        # 1. VALIDASI KEAMANAN INPUT (Anti Minus)
+        if form.jumlah.data <= 0:
+            flash("Nominal pembayaran tidak valid.", "danger")
+            return redirect(url_for('penghuni.pembayaran'))
+
+        # 2. VALIDASI FILE WAJIB UTK TRANSFER
+        if 'Transfer' in metode_pilihan and not form.bukti_transfer.data:
+            flash('Untuk pembayaran Transfer, wajib menyertakan Bukti Transfer!', 'danger')
+            return redirect(url_for('penghuni.pembayaran'))
+
+        # 3. PROSES UPLOAD AMAN
+        if form.bukti_transfer.data:
+            file = form.bukti_transfer.data
+            
+            # Cek ekstensi manual (Double protection selain dari WTForms)
+            ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+            if '.' not in file.filename or \
+               file.filename.rsplit('.', 1)[1].lower() not in ALLOWED_EXTENSIONS:
+                flash('Format file tidak didukung. Harap upload JPG atau PNG.', 'danger')
+                return redirect(url_for('penghuni.pembayaran'))
+
+            # --- RAHASIA KEAMANAN: GANTI NAMA FILE JADI UUID ---
+            # Ambil ekstensi aslinya (misal .jpg)
+            ext = file.filename.rsplit('.', 1)[1].lower()
+            # Buat nama acak baru
+            filename = f"{uuid.uuid4().hex}.{ext}"
+            # ---------------------------------------------------
+
+            folder_tujuan = current_app.config['UPLOAD_FOLDER']
+            if not os.path.exists(folder_tujuan):
+                os.makedirs(folder_tujuan)
+            
+            file_path = os.path.join(folder_tujuan, filename)
+            file.save(file_path)
+
+        # Simpan ke Database
+        new_payment = Pembayaran(
+            penghuni_id=current_user.id,
+            kamar_id=form.kamar_id.data,
+            bulan=form.bulan.data,
+            jumlah=form.jumlah.data,
+            metode=metode_pilihan,
+            status='pending',
+            tanggal_bayar=datetime.now(),
+            bukti_transfer=filename
+        )
+
+        try:
+            db.session.add(new_payment)
+            db.session.commit()
+            flash('Pembayaran berhasil dikirim.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('Terjadi kesalahan database.', 'danger')
+            print(e) # Untuk debugging di terminal
+
+        return redirect(url_for('penghuni.pembayaran'))
+
+    if form.errors:
+        for err_msg in form.errors.values():
+            flash(f"{err_msg[0]}", "danger")
+
+    data_pembayaran = Pembayaran.query.filter_by(penghuni_id=current_user.id)\
+                                      .order_by(Pembayaran.id.desc()).all()
+
+    return render_template('pembayaran_penghuni.html', 
+                           form=form, 
+                           sidebar='partials/sidebar_penghuni.html',
+                           pembayaran=data_pembayaran)

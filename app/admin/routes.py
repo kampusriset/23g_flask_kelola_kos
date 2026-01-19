@@ -1,5 +1,5 @@
 import os
-from flask import render_template, redirect, request, url_for, flash, abort, current_app
+from flask import render_template, redirect, request, url_for, flash, abort, current_app, send_from_directory
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
@@ -7,7 +7,7 @@ from app.utils.upload import save_image
 
 
 from app import db
-from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan
+from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan, Pembayaran
 from app.utils.decorators import role_required
 from app.models import User, Peraturan, Pengumuman, Jadwal # Tambahkan Jadwal di import
 
@@ -344,6 +344,8 @@ def hapus_kamar(id):
     db.session.commit()
     flash('Kamar berhasil dihapus.', 'success')
     return redirect(url_for('admin.kelola_kamar'))
+
+
 @admin_bp.route('/jadwal', methods=['GET', 'POST'])
 @admin_bp.route('/jadwal/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -421,3 +423,58 @@ def tanggapi_pengaduan(id):
         db.session.commit()
         flash('Berhasil memberikan tanggapan!', 'success')
     return redirect(url_for('admin.daftar_pengaduan'))
+
+
+
+@admin_bp.route('/pembayaran', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def pembayaran():
+    # 1. Mengambil data dari tabel 'Pembayaran' (bukan Payment)
+    # Saya tambahkan order_by desc agar data terbaru muncul paling atas
+    data_pembayaran = Pembayaran.query.order_by(Pembayaran.id.desc()).all()
+
+    if request.method == 'POST':
+        # 2. Ambil ID. Pastikan name di input form HTML nanti adalah 'pembayaran_id'
+        p_id = request.form.get('pembayaran_id')
+        bayar_obj = Pembayaran.query.get(p_id)
+
+        if bayar_obj:
+            # 3. Update status sesuai Enum ('lunas'), BUKAN True/False
+            bayar_obj.status = 'lunas'
+            
+            # Opsional: Jika admin memverifikasi, kita bisa set tanggal_bayar ke sekarang 
+            # jika sebelumnya kosong/None.
+            if not bayar_obj.tanggal_bayar:
+                bayar_obj.tanggal_bayar = datetime.now()
+
+            db.session.commit()
+            flash("Pembayaran berhasil diverifikasi menjadi Lunas.", "success")
+        else:
+            flash("Data pembayaran tidak ditemukan.", "warning")
+
+        return redirect(url_for('admin.pembayaran'))
+
+    # 4. Render template dengan variabel yang benar
+    return render_template('pembayaran_admin.html', 
+                           payments=data_pembayaran, # Mengirim list object Pembayaran
+                           sidebar='partials/sidebar_admin.html')
+
+
+
+
+@admin_bp.route('/lihat-bukti/<filename>')
+@login_required
+def lihat_bukti(filename):
+    # Opsi Tambahan: Hanya Admin yang boleh lihat
+    # if current_user.role != 'admin':
+    #     abort(403) # Forbidden
+    
+    # Ambil lokasi folder private dari config
+    folder_private = current_app.config['UPLOAD_FOLDER']
+    
+    # Kirim file ke browser
+    try:
+        return send_from_directory(folder_private, filename)
+    except FileNotFoundError:
+        abort(404)

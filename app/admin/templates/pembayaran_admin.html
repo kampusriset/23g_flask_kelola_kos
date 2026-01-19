@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Pembayaran{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+        Daftar Pembayaran Penghuni
+    </h2>
+
+    <div class="overflow-x-auto">
+        <table class="table-auto border-collapse border border-gray-300 dark:border-gray-700 w-full mb-10 text-sm">
+            <thead class="bg-gray-100 dark:bg-gray-800 text-left">
+                <tr>
+                    <th class="border px-4 py-2">ID</th>
+                    <th class="border px-4 py-2">Penghuni ID</th>
+                    <th class="border px-4 py-2">Bulan</th>
+                    <th class="border px-4 py-2">Jumlah</th>
+                    <th class="border px-4 py-2">Metode</th>
+                    <th class="border px-4 py-2">Bukti</th>
+                    <th class="border px-4 py-2">Status</th>
+                    <th class="border px-4 py-2">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in payments %}
+                <tr class="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                    
+                    <td class="border px-4 py-2 text-center">{{ p.id }}</td>
+                    
+                    <td class="border px-4 py-2">
+                        {{ p.penghuni_id }}
+                    </td>
+
+                    <td class="border px-4 py-2">{{ p.bulan }}</td>
+
+                    <td class="border px-4 py-2 font-medium">
+                        Rp {{ "{:,.0f}".format(p.jumlah).replace(',', '.') }}
+                    </td>
+
+                    <td class="border px-4 py-2">{{ p.metode or '-' }}</td>
+
+                    <td class="border px-4 py-2 text-center">
+                        {% if p.bukti_transfer %}
+                            <a href="{{ url_for('admin.lihat_bukti', filename=p.bukti_transfer) }}" 
+                               target="_blank" 
+                               class="text-blue-600 hover:text-blue-800 hover:underline text-xs font-semibold flex items-center justify-center gap-1">
+                               <i data-feather="eye" class="w-4 h-4"></i>
+                               Lihat Foto
+                            </a>
+                        {% else %}
+                            <span class="text-gray-400 text-xs">-</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="border px-4 py-2 text-center">
+                        {% if p.status == 'lunas' %}
+                            <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+                                ✅ Lunas
+                            </span>
+                        {% else %}
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900">
+                                ⏳ Pending
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td class="border px-4 py-2 text-center">
+                        {% if p.status == 'pending' %}
+                            <form method="POST" action="{{ url_for('admin.pembayaran') }}" onsubmit="return confirm('Verifikasi pembayaran ini jadi LUNAS?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                
+                                <input type="hidden" name="pembayaran_id" value="{{ p.id }}">
+                                
+                                <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition">
+                                    Verifikasi
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="text-gray-400 text-xs">Selesai</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center py-4 text-gray-500">
+                        Belum ada data pembayaran.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
