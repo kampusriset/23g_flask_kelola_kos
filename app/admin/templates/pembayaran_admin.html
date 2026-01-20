@@ -3,94 +3,116 @@
 {% block title %}Admin Pembayaran{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-6">
-    <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200">
-        Daftar Pembayaran Penghuni
-    </h2>
+<div class="max-w-7xl mx-auto space-y-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Daftar Pembayaran</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            Pantau dan verifikasi pembayaran masuk.
+        </p>
+    </div>
 
-    <div class="overflow-x-auto">
-        <table class="table-auto border-collapse border border-gray-300 dark:border-gray-700 w-full mb-10 text-sm">
-            <thead class="bg-gray-100 dark:bg-gray-800 text-left">
-                <tr>
-                    <th class="border px-4 py-2">ID</th>
-                    <th class="border px-4 py-2">Penghuni ID</th>
-                    <th class="border px-4 py-2">Bulan</th>
-                    <th class="border px-4 py-2">Jumlah</th>
-                    <th class="border px-4 py-2">Metode</th>
-                    <th class="border px-4 py-2">Bukti</th>
-                    <th class="border px-4 py-2">Status</th>
-                    <th class="border px-4 py-2">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in payments %}
-                <tr class="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-                    
-                    <td class="border px-4 py-2 text-center">{{ p.id }}</td>
-                    
-                    <td class="border px-4 py-2">
-                        {{ p.penghuni_id }}
-                    </td>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th class="px-6 py-4">Tgl & ID</th>
+                        <th class="px-6 py-4">Penghuni</th>
+                        <th class="px-6 py-4">Kamar</th>
+                        <th class="px-6 py-4">Tagihan</th>
+                        <th class="px-6 py-4">Bukti</th>
+                        <th class="px-6 py-4 text-center">Status</th>
+                        <th class="px-6 py-4 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    {% for p in payments %}
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                        
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-gray-800 dark:text-white">
+                                {{ p.tanggal_bayar.strftime('%d/%m/%Y') }}
+                            </div>
+                            <div class="text-xs text-gray-400">ID: #{{ p.id }}</div>
+                        </td>
+                        
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-gray-800 dark:text-white">{{ p.penghuni.nama }}</div>
+                            <div class="text-xs text-gray-400">{{ p.penghuni.no_hp }}</div>
+                        </td>
 
-                    <td class="border px-4 py-2">{{ p.bulan }}</td>
+                        <td class="px-6 py-4">
+                            <div class="text-blue-600 font-bold">{{ p.kamar.nomor_kamar }}</div>
+                            <div class="text-xs text-gray-500">{{ p.bulan }}</div>
+                        </td>
 
-                    <td class="border px-4 py-2 font-medium">
-                        Rp {{ "{:,.0f}".format(p.jumlah).replace(',', '.') }}
-                    </td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-gray-800 dark:text-gray-200">
+                                Rp {{ "{:,.0f}".format(p.jumlah).replace(',', '.') }}
+                            </div>
+                            <div class="text-xs text-gray-500">{{ p.metode or '-' }}</div>
+                        </td>
 
-                    <td class="border px-4 py-2">{{ p.metode or '-' }}</td>
+                        <td class="px-6 py-4">
+                            {% if p.bukti_transfer %}
+                                <a href="{{ url_for('admin.lihat_bukti', filename=p.bukti_transfer) }}" target="_blank" class="flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:underline text-xs font-semibold">
+                                    <i data-feather="image" class="w-4 h-4"></i> Lihat
+                                </a>
+                            {% else %}
+                                <span class="text-gray-400 text-xs italic">- Tidak ada -</span>
+                            {% endif %}
+                        </td>
 
-                    <td class="border px-4 py-2 text-center">
-                        {% if p.bukti_transfer %}
-                            <a href="{{ url_for('admin.lihat_bukti', filename=p.bukti_transfer) }}" 
-                               target="_blank" 
-                               class="text-blue-600 hover:text-blue-800 hover:underline text-xs font-semibold flex items-center justify-center gap-1">
-                               <i data-feather="eye" class="w-4 h-4"></i>
-                               Lihat Foto
-                            </a>
-                        {% else %}
-                            <span class="text-gray-400 text-xs">-</span>
-                        {% endif %}
-                    </td>
+                        <td class="px-6 py-4 text-center">
+                            {% if p.status == 'lunas' %}
+                                <span class="bg-green-100 text-green-700 px-2 py-1 rounded-lg text-xs font-bold border border-green-200">
+                                    LUNAS
+                                </span>
+                            {% elif p.status == 'pending' %}
+                                <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg text-xs font-bold border border-yellow-200">
+                                    PENDING
+                                </span>
+                            {% else %}
+                                <span class="bg-red-100 text-red-700 px-2 py-1 rounded-lg text-xs font-bold border border-red-200">
+                                    DITOLAK
+                                </span>
+                            {% endif %}
+                        </td>
 
-                    <td class="border px-4 py-2 text-center">
-                        {% if p.status == 'lunas' %}
-                            <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
-                                ✅ Lunas
-                            </span>
-                        {% else %}
-                            <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-yellow-200 dark:text-yellow-900">
-                                ⏳ Pending
-                            </span>
-                        {% endif %}
-                    </td>
+                        <td class="px-6 py-4 text-center">
+                            {% if p.status == 'pending' %}
+                                <div class="flex justify-center gap-2">
+                                    <form method="POST" action="{{ url_for('admin.konfirmasi_pembayaran', id=p.id) }}" onsubmit="return confirm('Verifikasi pembayaran ini? Masa sewa akan otomatis ditambah 30 hari.');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition shadow-sm" title="Verifikasi">
+                                            <i data-feather="check" class="w-4 h-4"></i>
+                                        </button>
+                                    </form>
 
-                    <td class="border px-4 py-2 text-center">
-                        {% if p.status == 'pending' %}
-                            <form method="POST" action="{{ url_for('admin.pembayaran') }}" onsubmit="return confirm('Verifikasi pembayaran ini jadi LUNAS?');">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                
-                                <input type="hidden" name="pembayaran_id" value="{{ p.id }}">
-                                
-                                <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition">
-                                    Verifikasi
-                                </button>
-                            </form>
-                        {% else %}
-                            <span class="text-gray-400 text-xs">Selesai</span>
-                        {% endif %}
-                    </td>
+                                    </div>
+                            {% elif p.status == 'lunas' %}
+                                <a href="{{ url_for('admin.cetak_invoice', id=p.id) }}" target="_blank" class="inline-flex items-center gap-1 bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-200 transition text-xs font-bold border border-gray-200">
+                                    <i data-feather="printer" class="w-3 h-3"></i> Invoice
+                                </a>
+                            {% else %}
+                                <span class="text-gray-400 text-xs">-</span>
+                            {% endif %}
+                        </td>
 
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="8" class="text-center py-4 text-gray-500">
-                        Belum ada data pembayaran.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {% if not payments %}
+            <div class="p-12 text-center flex flex-col items-center justify-center">
+                <i data-feather="inbox" class="w-10 h-10 text-gray-300 mb-3"></i>
+                <p class="text-gray-500">Belum ada data pembayaran masuk.</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
+
+<script>feather.replace();</script>
 {% endblock %}

@@ -1,28 +1,95 @@
-from datetime import datetime
+from datetime import datetime, date
 from flask import render_template, redirect, request, url_for, flash, current_app
 import os
 from werkzeug.utils import secure_filename
 from flask_login import login_required, current_user
 from app import db
 import uuid
+from sqlalchemy import func, extract
 
 from app.models import Pengumuman, Peraturan, Jadwal, Pengaduan, Pembayaran
 from app.utils.upload import save_image
 from .forms import PengaduanForm, ProfileForm, PembayaranForm
 from app.utils.decorators import role_required
-
+import locale
 
 from . import penghuni_bp
+
+try:
+    locale.setlocale(locale.LC_TIME, 'id_ID.UTF-8')
+except:
+    pass
 
 
 @penghuni_bp.route('/dashboard')
 @login_required
 @role_required('penghuni')
 def dashboard():
-    return render_template(
-        'dashboard_penghuni.html',
-        sidebar='partials/sidebar_penghuni.html'
-    )
+    # 1. DATA UMUM
+    semua_pengumuman = Pengumuman.query.order_by(Pengumuman.id.desc()).all()
+    penghuni = current_user.penghuni
+    
+    # Default values
+    nomor_kamar = "Belum Ada"
+    sisa_hari = 0
+    pembayaran_pending = 0
+    
+    # Variabel untuk Chart
+    chart_labels = []
+    chart_data_bayar = []
+    aduan_stats = [0, 0, 0] # [Menunggu, Diproses, Selesai]
+
+    if penghuni:
+        # A. Info Kamar & Sisa Hari
+        if penghuni.kamar:
+            nomor_kamar = penghuni.kamar.nomor_kamar
+        if penghuni.tanggal_keluar:
+            sisa_hari = (penghuni.tanggal_keluar - date.today()).days
+        
+        # B. Pembayaran Pending
+        pembayaran_pending = Pembayaran.query.filter_by(penghuni_id=penghuni.id, status='pending').count()
+
+        # --- DATA CHART 1: RIWAYAT BAYAR SAYA (6 Bulan) ---
+        today = date.today()
+        for i in range(5, -1, -1):
+            target_month = today.month - i
+            target_year = today.year
+            if target_month <= 0:
+                target_month += 12
+                target_year -= 1
+            
+            # Label Bulan
+            chart_labels.append(date(target_year, target_month, 1).strftime('%b'))
+            
+            # Query Total Bayar LUNAS milik penghuni ini saja
+            total = db.session.query(func.sum(Pembayaran.jumlah))\
+                .filter(Pembayaran.penghuni_id == penghuni.id)\
+                .filter(extract('year', Pembayaran.tanggal_bayar) == target_year)\
+                .filter(extract('month', Pembayaran.tanggal_bayar) == target_month)\
+                .filter(Pembayaran.status == 'lunas')\
+                .scalar() or 0
+            
+            chart_data_bayar.append(total)
+
+        # --- DATA CHART 2: STATISTIK PENGADUAN SAYA ---
+        # Hitung jumlah pengaduan berdasarkan status
+        aduan_menunggu = Pengaduan.query.filter_by(penghuni_id=penghuni.id, status='menunggu').count()
+        aduan_proses   = Pengaduan.query.filter_by(penghuni_id=penghuni.id, status='diproses').count()
+        aduan_selesai  = Pengaduan.query.filter_by(penghuni_id=penghuni.id, status='selesai').count()
+        
+        aduan_stats = [aduan_menunggu, aduan_proses, aduan_selesai]
+
+    return render_template('dashboard_penghuni.html',
+                           sidebar='partials/sidebar_penghuni.html',
+                           semua_pengumuman=semua_pengumuman,
+                           penghuni=penghuni,
+                           nomor_kamar=nomor_kamar,
+                           sisa_hari=sisa_hari,
+                           pembayaran_pending=pembayaran_pending,
+                           # Kirim Data Chart
+                           chart_labels=chart_labels,
+                           chart_data_bayar=chart_data_bayar,
+                           aduan_stats=aduan_stats)
 
 
 
@@ -169,52 +236,67 @@ def profile():
 @login_required
 def pembayaran():
     form = PembayaranForm()
+    
+    # 1. CEK DATA PENGHUNI & KAMAR
+    penghuni = current_user.penghuni
+    if not penghuni or not penghuni.kamar:
+        flash('Anda belum terdaftar dalam kamar apapun. Hubungi admin.', 'danger')
+        return redirect(url_for('penghuni.dashboard'))
+        
+    kamar = penghuni.kamar # Object kamar dari database
 
+    # 2. AUTO-FILL DATA (Jalankan di GET maupun POST agar data tidak hilang saat error validasi)
+    # Kita isi field form dengan data dari database agar aman dan konsisten
+    form.nomor_kamar.data = kamar.nomor_kamar  # Masukkan string "A101" ke field nomor_kamar
+    form.jumlah.data = kamar.harga           # Masukkan harga asli ke field jumlah
+    
+    # Set Bahasa Indonesia untuk Nama Bulan (Opsional)
+    try:
+        locale.setlocale(locale.LC_TIME, 'id_ID.UTF-8')
+    except:
+        pass # Fallback ke default sistem jika locale ID tidak ada
+    
+    # Set Bulan otomatis (selalu update ke bulan saat ini)
+    form.bulan.data = datetime.now().strftime('%B %Y') 
+
+    # 3. PROSES SUBMIT
     if form.validate_on_submit():
         filename = None
         metode_pilihan = form.metode.data
         
-        # 1. VALIDASI KEAMANAN INPUT (Anti Minus)
-        if form.jumlah.data <= 0:
-            flash("Nominal pembayaran tidak valid.", "danger")
-            return redirect(url_for('penghuni.pembayaran'))
-
-        # 2. VALIDASI FILE WAJIB UTK TRANSFER
+        # Validasi File Transfer
         if 'Transfer' in metode_pilihan and not form.bukti_transfer.data:
-            flash('Untuk pembayaran Transfer, wajib menyertakan Bukti Transfer!', 'danger')
+            flash('Wajib menyertakan Bukti Transfer untuk metode Transfer!', 'danger')
             return redirect(url_for('penghuni.pembayaran'))
 
-        # 3. PROSES UPLOAD AMAN
+        # Proses Upload File
         if form.bukti_transfer.data:
             file = form.bukti_transfer.data
             
-            # Cek ekstensi manual (Double protection selain dari WTForms)
-            ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-            if '.' not in file.filename or \
-               file.filename.rsplit('.', 1)[1].lower() not in ALLOWED_EXTENSIONS:
-                flash('Format file tidak didukung. Harap upload JPG atau PNG.', 'danger')
+            # Cek Ekstensi
+            ext = file.filename.rsplit('.', 1)[1].lower()
+            if ext not in {'png', 'jpg', 'jpeg'}:
+                flash('Format file harus JPG atau PNG.', 'danger')
                 return redirect(url_for('penghuni.pembayaran'))
 
-            # --- RAHASIA KEAMANAN: GANTI NAMA FILE JADI UUID ---
-            # Ambil ekstensi aslinya (misal .jpg)
-            ext = file.filename.rsplit('.', 1)[1].lower()
-            # Buat nama acak baru
+            # Rename File dengan UUID agar unik
             filename = f"{uuid.uuid4().hex}.{ext}"
-            # ---------------------------------------------------
-
-            folder_tujuan = current_app.config['UPLOAD_FOLDER']
-            if not os.path.exists(folder_tujuan):
-                os.makedirs(folder_tujuan)
             
-            file_path = os.path.join(folder_tujuan, filename)
-            file.save(file_path)
+            # Pastikan folder upload ada
+            upload_path = current_app.config['UPLOAD_FOLDER']
+            if not os.path.exists(upload_path):
+                os.makedirs(upload_path)
+                
+            file.save(os.path.join(upload_path, filename))
 
-        # Simpan ke Database
+        # SIMPAN KE DATABASE
+        # PENTING: Gunakan 'kamar.id' dan 'kamar.harga' dari variabel database (baris 22),
+        # JANGAN ambil dari form.jumlah.data untuk menghindari manipulasi user (Inspect Element).
         new_payment = Pembayaran(
-            penghuni_id=current_user.id,
-            kamar_id=form.kamar_id.data,
-            bulan=form.bulan.data,
-            jumlah=form.jumlah.data,
+            penghuni_id=penghuni.id,
+            kamar_id=kamar.id,           # ID asli (Integer)
+            bulan=form.bulan.data,       # Bulan (String)
+            jumlah=kamar.harga,          # Harga Asli (Integer)
             metode=metode_pilihan,
             status='pending',
             tanggal_bayar=datetime.now(),
@@ -224,22 +306,37 @@ def pembayaran():
         try:
             db.session.add(new_payment)
             db.session.commit()
-            flash('Pembayaran berhasil dikirim.', 'success')
+            flash('Pembayaran berhasil dikirim. Menunggu konfirmasi Admin.', 'success')
         except Exception as e:
             db.session.rollback()
             flash('Terjadi kesalahan database.', 'danger')
-            print(e) # Untuk debugging di terminal
+            print(f"Error: {e}")
 
         return redirect(url_for('penghuni.pembayaran'))
 
-    if form.errors:
-        for err_msg in form.errors.values():
-            flash(f"{err_msg[0]}", "danger")
-
-    data_pembayaran = Pembayaran.query.filter_by(penghuni_id=current_user.id)\
+    # 4. TAMPILKAN HISTORY
+    data_pembayaran = Pembayaran.query.filter_by(penghuni_id=penghuni.id)\
                                       .order_by(Pembayaran.id.desc()).all()
 
     return render_template('pembayaran_penghuni.html', 
                            form=form, 
                            sidebar='partials/sidebar_penghuni.html',
                            pembayaran=data_pembayaran)
+
+@penghuni_bp.route('/kamar-saya')
+@login_required
+@role_required('penghuni')
+def kamar_saya():
+    
+    if not current_user.penghuni:
+        flash('Data penghuni tidak ditemukan. Hubungi admin.', 'danger')
+        return redirect(url_for('penghuni.dashboard'))
+
+    my_kamar = current_user.penghuni.kamar
+
+    return render_template(
+        'kamar_penghuni.html',
+        sidebar='partials/sidebar_penghuni.html',
+        kamar=my_kamar,
+        date=date
+    )

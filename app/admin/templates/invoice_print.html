@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #{{ p.id }} - {{ p.penghuni.nama }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-10 font-sans text-gray-800">
+
+    <div class="max-w-3xl mx-auto bg-white p-10 shadow-lg rounded-xl border border-gray-200">
+        
+        <div class="flex justify-between items-start border-b border-gray-200 pb-8 mb-8">
+            <div>
+                <h1 class="text-4xl font-extrabold text-blue-600 tracking-tight">INVOICE</h1>
+                <p class="text-gray-500 mt-1 text-sm">Bukti Pembayaran Sewa Kos</p>
+            </div>
+            <div class="text-right">
+                <div class="px-6 flex items-center gap-3 mb-2">
+                    <a href="{{ url_for('penghuni.dashboard') }}" class="flex items-center gap-3">
+                    <img src="{{ url_for('static', filename='img/logo.svg') }}" class="w-9 h-9 object-contain">
+                    <h1 class="text-xl font-bold text-gray-800 dark:text-dark tracking-tight">MyKost</h1>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-sm">Jl. Contoh Alamat No. 123</p>
+                <p class="text-gray-500 text-sm">Jakarta, Indonesia</p>
+                <p class="text-gray-500 text-sm">admin@mykost.com</p>
+            </div>
+        </div>
+
+        <div class="flex justify-between mb-10">
+            <div>
+                <p class="text-gray-500 text-xs uppercase font-bold tracking-wider mb-1">DITAGIHKAN KEPADA:</p>
+                <h3 class="text-xl font-bold text-gray-800">{{ p.penghuni.nama }}</h3>
+                <p class="text-gray-600 text-sm mt-1">
+                    Kamar {{ p.kamar.nomor_kamar }} ({{ p.kamar.tipe }})
+                </p>
+                <p class="text-gray-600 text-sm">{{ p.penghuni.no_hp }}</p>
+            </div>
+            <div class="text-right">
+                <div class="mb-2">
+                    <span class="text-gray-500 text-xs uppercase font-bold tracking-wider">NO. INVOICE:</span>
+                    <span class="block font-bold text-gray-800">INV-{{ "{:04d}".format(p.id) }}</span>
+                </div>
+                <div class="mb-2">
+                    <span class="text-gray-500 text-xs uppercase font-bold tracking-wider">TANGGAL BAYAR:</span>
+                    <span class="block font-bold text-gray-800">{{ p.tanggal_bayar.strftime('%d %B %Y') }}</span>
+                </div>
+                <div>
+                    <span class="text-gray-500 text-xs uppercase font-bold tracking-wider">STATUS:</span>
+                    <span class="inline-block bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-bold border border-green-200">LUNAS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-y border-gray-200">
+                        <th class="py-3 px-4 text-left text-xs font-bold text-gray-500 uppercase">Keterangan</th>
+                        <th class="py-3 px-4 text-right text-xs font-bold text-gray-500 uppercase">Periode</th>
+                        <th class="py-3 px-4 text-right text-xs font-bold text-gray-500 uppercase">Metode</th>
+                        <th class="py-3 px-4 text-right text-xs font-bold text-gray-500 uppercase">Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b border-gray-100">
+                        <td class="py-4 px-4 font-medium">Pembayaran Sewa Kamar Kos</td>
+                        <td class="py-4 px-4 text-right text-gray-600">{{ p.bulan }}</td>
+                        <td class="py-4 px-4 text-right text-gray-600">{{ p.metode }}</td>
+                        <td class="py-4 px-4 text-right font-bold text-gray-800">Rp {{ "{:,.0f}".format(p.jumlah).replace(',', '.') }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex justify-end mb-12">
+            <div class="w-1/2">
+                <div class="flex justify-between py-2 border-b border-gray-200">
+                    <span class="font-bold text-gray-800">TOTAL BAYAR</span>
+                    <span class="font-bold text-2xl text-blue-600">Rp {{ "{:,.0f}".format(p.jumlah).replace(',', '.') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-end mt-20 pt-8 border-t border-gray-200">
+            <div class="text-xs text-gray-400">
+                <p>Terima kasih telah melakukan pembayaran.</p>
+                <p>Invoice ini sah dan diproses secara komputerisasi.</p>
+            </div>
+            <div class="text-center">
+                <p class="text-sm font-bold text-gray-800 mb-16">Pemilik Kost</p>
+                <p class="text-xs text-gray-500">( Tanda Tangan & Cap )</p>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center no-print space-x-4">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition transform active:scale-95">
+                Cetak Invoice
+            </button>
+            <button onclick="window.close()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg transition">
+                Tutup
+            </button>
+        </div>
+
+    </div>
+
+</body>
+</html>

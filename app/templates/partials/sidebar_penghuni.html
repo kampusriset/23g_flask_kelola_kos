@@ -20,8 +20,8 @@
       <i data-feather="calendar" class="w-5 h-5"></i> <span>Jadwal</span>
     </a>  
 
-    <a href="#"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.create_penghuni' else nav_inactive }}">
+    <a href="{{ url_for('penghuni.kamar_saya') }}"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.kamar_saya' else nav_inactive }}">
       <i data-feather="key" class="w-5 h-5"></i> <span>Kamar</span>
     </a>
 
@@ -66,7 +66,7 @@
     <i data-feather="home" class="w-6 h-6"></i>
     <span class="text-[10px] font-medium">Home</span>
   </a>
-  <a href="#"
+  <a href="{{ url_for('penghuni.kamar_saya') }}"
     class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'penghuni.create_penghuni' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
     <i data-feather="key" class="w-6 h-6"></i>
     <span class="text-[10px] font-medium">Kamar</span>
@@ -83,7 +83,7 @@
   </a>
   <a href="{{ url_for('penghuni.pengumuman') }}"
     class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'penghuni.pengumuman' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
-    <i data-feather="list" class="w-6 h-6"></i>
+    <i data-feather="tag" class="w-6 h-6"></i>
     <span class="text-[10px] font-medium">Pengumuman</span>
   </a>
   <button onclick="toggleDrawer()"
@@ -112,16 +112,16 @@
   <div class="flex-1 overflow-y-auto px-4 pt-2 space-y-2 no-scrollbar">
     <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">Fitur Lainnya</p>
 
-    <a href="#"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.jadwal' else nav_inactive }}">
+    <a href="{{ url_for('penghuni.jadwal') }}"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.jadwal' else nav_inactive }}">
       <i data-feather="calendar" class="w-4 h-4"></i> Jadwal
     </a>
     <a href="{{ url_for('penghuni.pembayaran') }}"
    class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.pembayaran' else nav_inactive }}">
    <i data-feather="credit-card" class="w-4 h-4"></i> Pembayaran
 </a>
-    <a href="#"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
+    <a href="{{ url_for('penghuni.pengaduan') }}"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'penghuni.pengaduan' else nav_inactive }}">
       <i data-feather="archive" class="w-4 h-4"></i> Pengaduan
     </a>
 

@@ -25,9 +25,9 @@
       <i data-feather="layout" class="w-5 h-5"></i> <span>Kamar</span>
     </a>
 
-    <a href="#"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-gray-400 cursor-not-allowed opacity-60" title="Gunakan menu Kelola Kamar">
-      <i data-feather="user-plus" class="w-5 h-5"></i> <span>Buat Penghuni</span>
+    <a href="{{ url_for('admin.kelola_penghuni') }}"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if 'kelola_penghuni' in request.endpoint else nav_inactive }}" title="Gunakan menu Kelola Kamar">
+      <i data-feather="user-plus" class="w-5 h-5"></i> <span>Penghuni</span>
     </a>
 
     <a href="{{ url_for('admin.pembayaran') }}"
@@ -35,7 +35,7 @@
       <i data-feather="credit-card" class="w-5 h-5"></i> <span>Pembayaran</span>
     </a>
 
-    <a href="{{ url_for('admin.daftar_pengaduan') }}"
+    <a href="{{ url_for('admin.pengaduan') }}"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengaduan' else nav_inactive }}">
       <i data-feather="archive" class="w-5 h-5"></i> <span>Pengaduan</span>
     </a>
@@ -83,7 +83,7 @@
   </a>
   <a href="{{ url_for('admin.pengumuman') }}"
     class="flex flex-col items-center gap-1 {{ 'text-blue-600 dark:text-blue-400' if request.endpoint == 'admin.pengumuman' else 'text-gray-400 hover:text-blue-600 dark:hover:text-blue-400' }}">
-    <i data-feather="list" class="w-6 h-6"></i>
+    <i data-feather="tag" class="w-6 h-6"></i>
     <span class="text-[10px] font-medium">Pengumuman</span>
   </a>
   <button onclick="toggleDrawer()"
@@ -112,20 +112,20 @@
   <div class="flex-1 overflow-y-auto px-4 pt-2 space-y-2 no-scrollbar">
     <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">Fitur Lainnya</p>
 
-    <a href="#"
+    <a href="{{ url_for('admin.jadwal') }}"
       class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.jadwal' else nav_inactive }}">
       <i data-feather="calendar" class="w-4 h-4"></i> Jadwal
     </a>
-    <a href="#"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition text-gray-400 cursor-not-allowed opacity-60 hover:text-gray-400">
-      <i data-feather="user-plus" class="w-4 h-4"></i> Buat Penghuni
+    <a href="{{ url_for('admin.kelola_penghuni') }}"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if 'kelola_penghuni' in request.endpoint else nav_inactive }}">
+      <i data-feather="user-plus" class="w-4 h-4"></i> Penghuni
     </a>
-    <a href="#"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.create_penghuni' else nav_inactive }}">
+    <a href="{{ url_for('admin.pembayaran') }}"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pembayaran' else nav_inactive }}">
       <i data-feather="credit-card" class="w-4 h-4"></i> Pembayaran
     </a>
-    <a href="{{ url_for('admin.pengumuman') }}"
-      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengumuman' else nav_inactive }}">
+    <a href="{{ url_for('admin.pengaduan') }}"
+      class="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition {{ nav_active if request.endpoint == 'admin.pengaduan' else nav_inactive }}">
       <i data-feather="archive" class="w-4 h-4"></i> Pengaduan
     </a>
 
