@@ -3,11 +3,13 @@
 {% block title %}Dashboard Admin{% endblock %}
 
 {% block content %}
-<div class="space-y-6 max-w-7xl mx-auto">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="space-y-8 max-w-7xl mx-auto">
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="mb-6 space-y-3">
+      <div class="space-y-3">
         {% for category, message in messages %}
           <div class="flex items-center gap-3 p-4 rounded-xl border shadow-sm transition-all
                       {{ 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' if category == 'success' else 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' }}">
@@ -27,56 +29,217 @@
       </div>
       <div class="relative z-10">
           <p class="text-blue-100 font-medium mb-1">DASHBOARD ADMINISTRATOR</p>
-          <h1 class="text-2xl md:text-4xl font-bold mb-2">Selamat Datang, {{ current_user.username }}!</h1>
+          <h1 class="text-2xl md:text-4xl font-bold mb-2">Halo, {{ admin.nama if admin else current_user.username }}!</h1>
           <p class="text-blue-50 text-sm md:text-base opacity-90">Anda login sebagai <strong>{{ current_user.role }}!</strong>.</p>
       </div>
   </div>
 
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+                <div class="p-3 bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 rounded-xl">
+                    <i data-feather="home" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Kamar Kosong</p>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ kamar_kosong }} <span class="text-xs text-gray-400 font-normal">/ {{ total_kamar }}</span></h3>
+                </div>
+            </div>
 
-      <a href="{{ url_for('admin.create_penghuni') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-blue-100 dark:bg-blue-900/40 p-4 rounded-full text-blue-600 dark:text-blue-400 group-hover:scale-110 transition duration-300">
-              <i data-feather="user-plus" class="w-6 h-6"></i>
-          </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400">Buat Penghuni</span>
-      </a>
+            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+                <div class="p-3 bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 rounded-xl">
+                    <i data-feather="users" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Penghuni Aktif</p>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ total_penghuni }}</h3>
+                </div>
+            </div>
 
-      <a href="#" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-indigo-100 dark:bg-indigo-900/40 p-4 rounded-full text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition duration-300">
-              <i data-feather="layout" class="w-6 h-6"></i>
-          </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Kelola Kamar</span>
-      </a>
+            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+                <div class="p-3 {{ 'bg-red-100 text-red-600 animate-pulse' if pembayaran_pending > 0 else 'bg-gray-100 text-gray-500' }} rounded-xl">
+                    <i data-feather="dollar-sign" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Verifikasi Bayar</p>
+                    <h3 class="text-2xl font-bold {{ 'text-red-600' if pembayaran_pending > 0 else 'text-gray-800 dark:text-white' }}">{{ pembayaran_pending }}</h3>
+                </div>
+            </div>
 
-      <a href="{{ url_for('admin.pembayaran') }}"
-   class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-    <div class="bg-orange-100 dark:bg-orange-900/40 p-4 rounded-full text-orange-600 dark:text-orange-400 group-hover:scale-110 transition duration-300">
-        <i data-feather="credit-card" class="w-6 h-6"></i>
+            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+                <div class="p-3 bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 rounded-xl">
+                    <i data-feather="grid" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Aset Kamar</p>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ total_kamar }}</h3>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+            <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <i data-feather="bar-chart-2" class="w-4 h-4 text-blue-500"></i> Pendapatan 6 Bulan Terakhir
+                </h3>
+                <div class="h-64">
+                    <canvas id="incomeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <i data-feather="pie-chart" class="w-4 h-4 text-indigo-500"></i> Status Okupansi
+                </h3>
+                <div class="h-64 flex justify-center">
+                    <canvas id="occupancyChart"></canvas>
+                </div>
+            </div>
+
     </div>
-    <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-orange-600 dark:group-hover:text-orange-400">
-        Pembayaran
-    </span>
-    </a>
 
+  <div class="mt-4 gap-4 space-y-6">
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <i data-feather="grid" class="w-5 h-5 text-blue-500"></i>
+            Akses Cepat
+        </h2>
 
-      <a href="{{ url_for('admin.pengumuman') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-purple-100 dark:bg-purple-900/40 p-4 rounded-full text-purple-600 dark:text-purple-400 group-hover:scale-110 transition duration-300">
-              <i data-feather="bell" class="w-6 h-6"></i>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+
+            <a href="#" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-blue-100 dark:bg-blue-900/40 p-4 rounded-full text-blue-600 dark:text-blue-400 group-hover:scale-110 transition duration-300">
+                    <i data-feather="user-plus" class="w-6 h-6"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400">Buat Penghuni</span>
+            </a>
+
+            <a href="{{ url_for('admin.kelola_kamar') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-indigo-100 dark:bg-indigo-900/40 p-4 rounded-full text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition duration-300">
+                    <i data-feather="layout" class="w-6 h-6"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Kelola Kamar</span>
+            </a>
+
+            <a href="{{ url_for('admin.pembayaran') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-orange-100 dark:bg-orange-900/40 p-4 rounded-full text-orange-600 dark:text-orange-400 group-hover:scale-110 transition duration-300">
+                    <div class="relative">
+                        <i data-feather="credit-card" class="w-6 h-6"></i>
+                        {% if pembayaran_pending > 0 %}
+                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-orange-600 dark:group-hover:text-orange-400">
+                    Pembayaran
+                </span>
+            </a>
+
+            <a href="{{ url_for('admin.pengumuman') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-purple-100 dark:bg-purple-900/40 p-4 rounded-full text-purple-600 dark:text-purple-400 group-hover:scale-110 transition duration-300">
+                    <i data-feather="bell" class="w-6 h-6"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-purple-600 dark:group-hover:text-purple-400">Pengumuman</span>
+            </a>
+
+            <a href="{{ url_for('admin.peraturan') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-green-100 dark:bg-green-900/40 p-4 rounded-full text-green-600 dark:text-green-400 group-hover:scale-110 transition duration-300">
+                    <i data-feather="book" class="w-6 h-6"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-green-600 dark:group-hover:text-green-400">Peraturan</span>
+            </a>
+
+        </div>
+  </div>
+  
+  <div class="space-y-4">
+      <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+          <i data-feather="bell" class="w-5 h-5 text-blue-500"></i>
+          Daftar Pengumuman
+      </h2>
+
+      {% if semua_pengumuman %}
+          <div class="space-y-4">
+              {% for p in semua_pengumuman %}
+              <div class="p-6 rounded-2xl border shadow-sm bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
+                  <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-1">
+                      {{ p.judul }}
+                  </h3>
+                  <div class="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 mb-3">
+                      <span class="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">
+                          <i data-feather="user" class="w-3 h-3"></i> 
+                          {{ p.pembuat.username if p.pembuat else 'Admin' }}
+                      </span>
+                  </div>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+                      {{ p.isi }}
+                  </p>
+              </div>
+              {% endfor %}
           </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-purple-600 dark:group-hover:text-purple-400">Pengumuman</span>
-      </a>
-
-      <a href="{{ url_for('admin.peraturan') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-green-100 dark:bg-green-900/40 p-4 rounded-full text-green-600 dark:text-green-400 group-hover:scale-110 transition duration-300">
-              <i data-feather="book" class="w-6 h-6"></i>
+      {% else %}
+          <div class="bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center flex flex-col items-center justify-center">
+              <i data-feather="volume-x" class="w-8 h-8 text-gray-400 mb-4"></i>
+              <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+                  Belum ada pengumuman
+              </h3>
           </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-green-600 dark:group-hover:text-green-400">Peraturan</span>
-      </a>
-
+      {% endif %}
   </div>
 
 </div>
+
 <script>
   if (typeof feather !== 'undefined') { feather.replace(); }
+
+  // 1. CHART PENDAPATAN
+  const ctxIncome = document.getElementById('incomeChart').getContext('2d');
+  new Chart(ctxIncome, {
+      type: 'bar',
+      data: {
+          labels: {{ chart_labels | tojson }}, 
+          datasets: [{
+              label: 'Pendapatan',
+              data: {{ chart_income | tojson }},
+              backgroundColor: '#3b82f6',
+              borderRadius: 5
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { callback: function(value) { return 'Rp ' + (value/1000).toLocaleString() + 'k'; } }
+            },
+            x: { grid: { display: false } }
+          }
+      }
+  });
+
+  // 2. CHART OKUPANSI
+  const ctxOcc = document.getElementById('occupancyChart').getContext('2d');
+  new Chart(ctxOcc, {
+      type: 'doughnut',
+      data: {
+          labels: ['Terisi', 'Kosong'],
+          datasets: [{
+              data: [{{ kamar_terisi }}, {{ kamar_kosong }}],
+              backgroundColor: ['#ef4444', '#22c55e'],
+              borderWidth: 0
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } }
+      }
+  });
 </script>
 {% endblock %}

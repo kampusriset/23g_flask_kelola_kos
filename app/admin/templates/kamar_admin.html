@@ -4,9 +4,9 @@
 <div class="max-w-6xl mx-auto space-y-8">
 
   <div>
-      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">KELOLA DATA KAMAR</h1>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Kelola Kamar</h1>
       <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
-        ATUR KESEDIAAN DAN DETAIL KAMAR KOS ANDA.
+        Atur ketersediaan dan detail kamar kos Anda.
       </p>
   </div>
 
@@ -115,15 +115,83 @@
                     </div>
 
                     {% if k.penghuni %}
-                    <div class="flex items-center gap-2 mb-4 p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                        <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 p-1.5 rounded-full">
-                            <i data-feather="user" class="w-3 h-3"></i>
-                        </div>
-                        <span class="text-xs font-bold text-gray-700 dark:text-gray-300">
-                            {% for p in k.penghuni %}
-                                {{ p.nama }}
-                            {% endfor %}
-                        </span>
+                    <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-600 space-y-3">
+                        
+                        {% for p in k.penghuni %}
+                        <div>
+                            <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-200 dark:border-gray-600">
+                                <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 p-1.5 rounded-full">
+                                    <i data-feather="user" class="w-3 h-3"></i>
+                                </div>
+                                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    {{ p.nama }}
+                                </span>
+                            </div>
+
+                            <div class="text-xs space-y-1 text-gray-500 dark:text-gray-400">
+                                <div class="flex justify-between">
+                                    <span>Masuk:</span>
+                                    <span class="font-medium text-gray-700 dark:text-gray-300">
+                                        {{ p.tanggal_masuk.strftime('%d-%m-%Y') }}
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Jatuh Tempo:</span>
+                                    <span class="font-bold text-gray-800 dark:text-white">
+                                        {{ p.tanggal_keluar.strftime('%d-%m-%Y') if p.tanggal_keluar else '-' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {% if p.tanggal_keluar %}
+                                <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-600 text-center">
+                                    
+                                    <div id="countdown-admin-{{ p.id }}" 
+                                         class="w-full py-2 px-2 mb-2 rounded-lg text-xs font-bold border text-center transition-colors"
+                                         data-deadline="{{ p.tanggal_keluar }}">
+                                         <span id="timer-text-{{ p.id }}">Loading...</span>
+                                    </div>
+
+                                    <script>
+                                    (function() {
+                                        const dateStr = "{{ p.tanggal_keluar }}"; 
+                                        const countDownDate = new Date(dateStr + "T23:59:59").getTime();
+                                        const box = document.getElementById("countdown-admin-{{ p.id }}");
+                                        const text = document.getElementById("timer-text-{{ p.id }}");
+
+                                        const x = setInterval(function() {
+                                            const now = new Date().getTime();
+                                            const distance = countDownDate - now;
+
+                                            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                                            if (distance < 0) {
+                                                clearInterval(x);
+                                                box.className = "w-full py-2 px-2 mb-2 rounded-lg text-xs font-bold border text-center bg-red-100 text-red-700 border-red-200";
+                                                text.innerHTML = "JATUH TEMPO! (Telat)";
+                                            } else {
+                                                if (days <= 3) {
+                                                    box.className = "w-full py-2 px-2 mb-2 rounded-lg text-xs font-bold border text-center bg-orange-100 text-orange-700 border-orange-200";
+                                                } else {
+                                                    box.className = "w-full py-2 px-2 mb-2 rounded-lg text-xs font-bold border text-center bg-green-100 text-green-700 border-green-200";
+                                                }
+                                                // Format Tampilan
+                                                text.innerHTML = `${days}h ${hours}j ${minutes}m ${seconds}d`;
+                                            }
+                                        }, 1000);
+                                    })();
+                                    </script>
+
+                                </div>
+                            {% else %}
+                                <p class="text-[10px] text-gray-400 mt-2 text-center italic">Tanggal keluar belum diset.</p>
+                            {% endif %}
+                            </div>
+                        {% endfor %}
+
                     </div>
                     {% endif %}
 

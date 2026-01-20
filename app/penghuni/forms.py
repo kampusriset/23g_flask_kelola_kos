@@ -44,29 +44,36 @@ class TanggapanForm(FlaskForm):
     submit = SubmitField('Kirim Tanggapan')
 
 # =========================
-# Form Pembayaran
+# Form Pembayaran (REVISI)
 # =========================
 class PembayaranForm(FlaskForm):
-    # Data Tagihan
-    kamar_id = IntegerField('ID Kamar', validators=[DataRequired(message="ID Kamar harus diisi")])
-    bulan = StringField('Bulan Tagihan', validators=[DataRequired(message="Bulan harus diisi (cth: Januari 2026)")])
-    jumlah = IntegerField('Jumlah (Rp)', validators=[DataRequired(message="Nominal harus diisi")])
+    # 1. Hapus 'kamar_id'. Kita tidak butuh input ini dari user karena
+    #    kita ambil ID-nya otomatis di routes.py berdasarkan user yang login.
+    
+    # 2. Field Nomor Kamar (Cukup satu saja)
+    # render_kw={'readonly': True} membuat field ini tidak bisa diedit di HTML
+    nomor_kamar = StringField('Nomor Kamar', render_kw={'readonly': True})
+    
+    # 3. Bulan & Jumlah
+    # Walaupun di HTML readonly, tetap perlu ada di sini agar bisa dirender
+    bulan = StringField('Bulan Tagihan', validators=[DataRequired()])
+    jumlah = IntegerField('Jumlah (Rp)', validators=[DataRequired()])
 
-    # Metode Pembayaran
+    # 4. Metode Pembayaran
     metode = SelectField(
         'Metode Pembayaran',
         choices=[
-            ('Cash', 'Tunai (Cash)'),
-            ('Transfer BCA', 'Transfer BCA - 1234567890'),
-            ('Transfer Mandiri', 'Transfer Mandiri - 0987654321'),
-            ('Transfer BNI', 'Transfer BNI - 1122334455')
+            ('Transfer', 'Transfer Bank'), # Saya sederhanakan value-nya biar mudah dicek di if 'Transfer'
+            ('Cash', 'Tunai (Cash)')
         ],
         validators=[DataRequired()]
     )
 
-    # Bukti Transfer
+    # 5. Bukti Transfer
+    # Pakai Optional() karena kalau bayar Tunai, file ini tidak wajib.
+    # Validasi wajib-nya sudah kita tangani manual di routes.py
     bukti_transfer = FileField('Bukti Transfer', validators=[
-        FileAllowed(['jpg', 'png', 'jpeg'], 'Hanya file gambar yang diperbolehkan!'),
+        FileAllowed(['jpg', 'png', 'jpeg'], 'Hanya file gambar (JPG/PNG)!'),
         Optional()
     ])
 

@@ -51,12 +51,24 @@
                     </p>
 
                     {% if l.status == 'menunggu' %}
-                    <form action="{{ url_for('admin.tanggapi_pengaduan', id=l.id) }}" method="POST" class="space-y-3">
-                        <textarea name="tanggapan" rows="2" required
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
-                            placeholder="Tulis tanggapan atau instruksi penyelesaian..."></textarea>
-                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
-                            <i data-feather="send" class="w-4 h-4"></i> Kirim Tanggapan & Selesaikan
+                    <form method="POST" action="{{ url_for('admin.pengaduan', id=l.id) }}" class="space-y-3">
+                        {{ form.hidden_tag() }}
+
+                        {# pastikan ID terkirim #}
+                        {{ form.pengaduan_id(value=l.id) }}
+
+                        <div>
+                            {{ form.tanggapan(
+                                rows=2,
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition resize-none",
+                                placeholder="Tulis tanggapan atau instruksi penyelesaian..."
+                            ) }}
+                        </div>
+
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95">
+                            <i data-feather="send" class="w-4 h-4"></i>
+                            Kirim Tanggapan & Selesaikan
                         </button>
                     </form>
                     {% else %}

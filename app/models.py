@@ -1,6 +1,7 @@
 from app import db
 from flask_login import UserMixin
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # =========================
 # USER (LOGIN)
@@ -29,6 +30,12 @@ class User(UserMixin, db.Model):
         default=datetime.utcnow,
         onupdate=datetime.utcnow
     )
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
     def is_admin(self):
         return self.role == 'admin'

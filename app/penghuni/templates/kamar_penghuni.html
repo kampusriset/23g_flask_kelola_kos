@@ -1,0 +1,170 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+
+  <div>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Kamar Saya</h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+        Detail informasi kamar yang sedang Anda tempati.
+      </p>
+  </div>
+
+  {% if kamar %}
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      
+      <div class="bg-blue-600 p-6 text-white flex justify-between items-center">
+          <div>
+              <h2 class="text-3xl font-extrabold">Kamar {{ kamar.nomor_kamar }}</h2>
+              <p class="opacity-90 text-sm mt-1">{{ kamar.tipe }}</p>
+          </div>
+          <div class="text-right">
+              <span class="block text-2xl font-bold">Rp {{ "{:,.0f}".format(kamar.harga) }}</span>
+              <span class="text-xs opacity-75">/ bulan</span>
+          </div>
+      </div>
+
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <div class="space-y-6">
+              <div>
+                  <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Fasilitas</h3>
+                  <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                      {{ kamar.fasilitas if kamar.fasilitas else "- Tidak ada data fasilitas -" }}
+                  </div>
+              </div>
+
+          </div>
+
+          <div>
+              <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <i data-feather="users" class="w-4 h-4"></i> Penghuni Kamar Ini
+              </h3>
+              
+              <div class="space-y-3">
+                  {% for p in kamar.penghuni %}
+                    <div class="p-3 rounded-xl border transition-colors
+                                {{ 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' if p.user_id == current_user.id else 'bg-white border-gray-100 dark:bg-gray-700 dark:border-gray-600' }}">
+                        
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                                {% if p.user and p.user.profile_photo %}
+                                    <img src="{{ url_for('static', filename=p.user.profile_photo) }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='img/default-avatar.jpeg') }}" class="w-full h-full object-cover">
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <p class="font-bold text-gray-800 dark:text-white text-sm flex items-center gap-2">
+                                    {{ p.nama }}
+                                    {% if p.user_id == current_user.id %}
+                                        <span class="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full">Saya</span>
+                                    {% endif %}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Masuk: {{ p.tanggal_masuk.strftime('%d %b %Y') }}</p>
+                            </div>
+                        </div>
+
+                        {% if p.user_id == current_user.id %}
+                            <div class="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                                
+                                <div class="flex justify-between items-center text-xs mb-2">
+                                    <span class="text-gray-600 dark:text-gray-300 font-medium">Jatuh Tempo:</span>
+                                    <span class="font-bold text-gray-800 dark:text-white">
+                                        {{ p.tanggal_keluar.strftime('%d %B %Y') if p.tanggal_keluar else '-' }}
+                                    </span>
+                                </div>
+
+                                {% if p.tanggal_keluar %}
+                                    <div id="countdown-box-{{ p.id }}" 
+                                        class="w-full py-2 px-3 rounded-lg text-sm font-bold border text-center transition-all duration-500"
+                                        data-deadline="{{ p.tanggal_keluar }}">
+                                        
+                                        <span id="timer-text-{{ p.id }}" class="flex justify-center items-center gap-2">
+                                            <i data-feather="loader" class="w-4 h-4 animate-spin"></i> Memuat waktu...
+                                        </span>
+                                    </div>
+                                    
+                                    <script>
+                                        (function() {
+                                            // 1. Ambil tanggal dari database (format YYYY-MM-DD)
+                                            const dateStr = "{{ p.tanggal_keluar }}"; 
+                                            // Kita set jamnya ke 23:59:59 di hari tersebut (biar full day)
+                                            const countDownDate = new Date(dateStr + "T23:59:59").getTime();
+                                            
+                                            const box = document.getElementById("countdown-box-{{ p.id }}");
+                                            const text = document.getElementById("timer-text-{{ p.id }}");
+
+                                            // 2. Fungsi Update Waktu
+                                            const x = setInterval(function() {
+                                                const now = new Date().getTime();
+                                                const distance = countDownDate - now;
+
+                                                // Hitung waktu
+                                                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                                                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                                                // 3. Tentukan Warna & Teks Berdasarkan Sisa Waktu
+                                                if (distance < 0) {
+                                                    // JIKA TELAT (Waktu Minus)
+                                                    clearInterval(x);
+                                                    box.className = "w-full py-2 px-3 rounded-lg text-xs font-bold border text-center bg-red-100 text-red-700 border-red-200";
+                                                    text.innerHTML = "WAKTU HABIS! Segera Bayar.";
+                                                } else {
+                                                    // JIKA MASIH ADA WAKTU
+                                                    if (days <= 3) {
+                                                        // Mepet (Kuning/Oranye)
+                                                        box.className = "w-full py-2 px-3 rounded-lg text-xs font-bold border text-center bg-orange-100 text-orange-700 border-orange-200";
+                                                    } else {
+                                                        // Aman (Hijau)
+                                                        box.className = "w-full py-2 px-3 rounded-lg text-xs font-bold border text-center bg-green-100 text-green-700 border-green-200";
+                                                    }
+                                                    
+                                                    // Tampilkan Format: 5h 23j 10m 50d
+                                                    text.innerHTML = `
+                                                        <span class="text-lg">${days}</span><span class="text-[10px] uppercase mr-1">hari</span>
+                                                        <span class="text-lg">${hours}</span><span class="text-[10px] uppercase mr-1">jam</span>
+                                                        <span class="text-lg">${minutes}</span><span class="text-[10px] uppercase mr-1">mnt</span>
+                                                        <span class="text-lg w-5 inline-block text-left">${seconds}</span><span class="text-[10px] uppercase">dtk</span>
+                                                    `;
+                                                }
+                                            }, 1000); // Update setiap 1 detik
+                                        })();
+                                    </script>
+                                {% else %}
+                                    <div class="text-xs text-center text-gray-400 italic">
+                                        Tanggal keluar belum diatur.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        </div>
+                  {% endfor %}
+              </div>
+          </div>
+
+      </div>
+  </div>
+
+  {% else %}
+  <div class="bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center flex flex-col items-center justify-center">
+      <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+          <i data-feather="home" class="w-8 h-8 text-gray-400"></i>
+      </div>
+      <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Belum Memiliki Kamar</h3>
+      <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+          Anda belum dimasukkan ke dalam kamar manapun. Silakan hubungi Admin atau pemilik kos untuk konfirmasi penempatan kamar.
+      </p>
+      <a href="{{ url_for('penghuni.pengaduan') }}" class="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition">
+          Hubungi Admin via Pengaduan
+      </a>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>feather.replace();</script>
+{% endblock %}

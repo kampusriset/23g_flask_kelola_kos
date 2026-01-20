@@ -1,13 +1,15 @@
 {% extends "layout.html" %}
 
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}Dashboard Penghuni{% endblock %}
 
 {% block content %}
-<div class="space-y-6 max-w-7xl mx-auto">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="space-y-8 max-w-7xl mx-auto">
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="mb-6 space-y-3">
+      <div class="space-y-3">
         {% for category, message in messages %}
           <div class="flex items-center gap-3 p-4 rounded-xl border shadow-sm transition-all
                       {{ 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' if category == 'success' else 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' }}">
@@ -23,49 +25,203 @@
 
   <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
       <div class="absolute right-0 top-0 opacity-10 transform translate-x-10 -translate-y-5">
-          <i data-feather="shield" class="w-48 h-48"></i>
+          <i data-feather="home" class="w-48 h-48"></i>
       </div>
       <div class="relative z-10">
-          <p class="text-blue-100 font-medium mb-1">Dashboard Administrator</p>
-          <h1 class="text-2xl md:text-4xl font-bold mb-2">Selamat Datang, {{ current_user.username }}!</h1>
-          <p class="text-blue-50 text-sm md:text-base opacity-90">Anda login sebagai <strong>{{ current_user.role }}!</strong>.</p>
+          <p class="text-blue-100 font-medium mb-1">DASHBOARD PENGHUNI</p>
+          <h1 class="text-2xl md:text-4xl font-bold mb-2">Halo, {{ penghuni.nama if penghuni else current_user.username }}!</h1>
+          <p class="text-blue-50 text-sm md:text-base opacity-90">Selamat datang di aplikasi manajemen kos kami.</p>
       </div>
   </div>
 
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-
-      <a href="#" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-blue-100 dark:bg-blue-900/40 p-4 rounded-full text-blue-600 dark:text-blue-400 group-hover:scale-110 transition duration-300">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+          <div class="p-3 bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 rounded-xl">
               <i data-feather="key" class="w-6 h-6"></i>
           </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400">Kamar</span>
-      </a>
+          <div>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Kamar Saat Ini</p>
+              <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ nomor_kamar }}</h3>
+          </div>
+      </div>
 
-      <a href="{{ url_for('penghuni.pembayaran') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-orange-100 dark:bg-orange-900/40 p-4 rounded-full text-orange-600 dark:text-orange-400 group-hover:scale-110 transition duration-300">
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+          <div class="p-3 {{ 'bg-red-100 text-red-600 animate-pulse' if sisa_hari < 3 else 'bg-green-100 text-green-600' }} rounded-xl">
+              <i data-feather="clock" class="w-6 h-6"></i>
+          </div>
+          <div>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Masa Sewa</p>
+              <h3 class="text-2xl font-bold {{ 'text-red-600' if sisa_hari < 3 else 'text-gray-800 dark:text-white' }}">
+                  {% if sisa_hari < 0 %}
+                      Lewat {{ sisa_hari | abs }} Hari
+                  {% else %}
+                      {{ sisa_hari }} <span class="text-sm font-normal text-gray-400">Hari Lagi</span>
+                  {% endif %}
+              </h3>
+          </div>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
+          <div class="p-3 {{ 'bg-orange-100 text-orange-600 animate-pulse' if pembayaran_pending > 0 else 'bg-gray-100 text-gray-500' }} rounded-xl">
               <i data-feather="credit-card" class="w-6 h-6"></i>
           </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-orange-600 dark:group-hover:text-orange-400">Pembayaran</span>
-      </a>
-
-      <a href="{{ url_for('penghuni.pengumuman') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-purple-100 dark:bg-purple-900/40 p-4 rounded-full text-purple-600 dark:text-purple-400 group-hover:scale-110 transition duration-300">
-              <i data-feather="bell" class="w-6 h-6"></i>
+          <div>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Status Pembayaran</p>
+              <h3 class="text-lg font-bold {{ 'text-orange-600' if pembayaran_pending > 0 else 'text-gray-800 dark:text-white' }}">
+                  {{ 'Menunggu Verifikasi' if pembayaran_pending > 0 else 'Aman (Lunas)' }}
+              </h3>
           </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-purple-600 dark:group-hover:text-purple-400">Pengumuman</span>
-      </a>
+      </div>
+  </div>
 
-      <a href="{{ url_for('penghuni.peraturan') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
-          <div class="bg-green-100 dark:bg-green-900/40 p-4 rounded-full text-green-600 dark:text-green-400 group-hover:scale-110 transition duration-300">
-              <i data-feather="book" class="w-6 h-6"></i>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+          <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+              <i data-feather="bar-chart" class="w-4 h-4 text-blue-500"></i> Riwayat Pembayaran Saya
+          </h3>
+          <div class="h-64">
+              <canvas id="paymentHistoryChart"></canvas>
           </div>
-          <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-green-600 dark:group-hover:text-green-400">Peraturan</span>
-      </a>
+      </div>
 
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+          <h3 class="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+              <i data-feather="pie-chart" class="w-4 h-4 text-purple-500"></i> Status Pengaduan
+          </h3>
+          <div class="h-64 flex justify-center">
+              <canvas id="complaintChart"></canvas>
+          </div>
+      </div>
+
+  </div>
+  <div class="mt-4 gap-4 space-y-6">
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <i data-feather="grid" class="w-5 h-5 text-blue-500"></i>
+            Akses Cepat
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <a href="{{ url_for('penghuni.kamar_saya') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-blue-100 dark:bg-blue-900/40 p-4 rounded-full text-blue-600 dark:text-blue-400 group-hover:scale-110 transition duration-300">
+                    <i data-feather="layout" class="w-6 h-6"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400">Detail Kamar</span>
+            </a>
+
+            <a href="{{ url_for('penghuni.peraturan') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-indigo-100 dark:bg-indigo-900/40 p-4 rounded-full text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition duration-300">
+                    <i data-feather="book" class="w-6 h-6"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Peraturan</span>
+            </a>
+
+            <a href="{{ url_for('penghuni.pembayaran') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-orange-100 dark:bg-orange-900/40 p-4 rounded-full text-orange-600 dark:text-orange-400 group-hover:scale-110 transition duration-300">
+                    <div class="relative">
+                        <i data-feather="credit-card" class="w-6 h-6"></i>
+                        {% if pembayaran_pending > 0 %}
+                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-orange-600 dark:group-hover:text-orange-400">Bayar Sewa</span>
+            </a>
+
+            <a href="{{ url_for('penghuni.pengaduan') }}" class="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center gap-4 hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500 transition-all">
+                <div class="bg-purple-100 dark:bg-purple-900/40 p-4 rounded-full text-purple-600 dark:text-purple-400 group-hover:scale-110 transition duration-300">
+                    <i data-feather="message-square" class="w-6 h-6"></i>
+                </div>
+                <span class="font-semibold text-gray-700 dark:text-gray-200 text-center text-sm md:text-base group-hover:text-purple-600 dark:group-hover:text-purple-400">Pengaduan</span>
+            </a>
+        </div>
+  </div>
+
+  <div class="space-y-4">
+      <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+          <i data-feather="bell" class="w-5 h-5 text-blue-500"></i> Daftar Pengumuman
+      </h2>
+      {% if semua_pengumuman %}
+          <div class="space-y-4">
+              {% for p in semua_pengumuman %}
+              <div class="p-6 rounded-2xl border shadow-sm bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700">
+                  <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-1">{{ p.judul }}</h3>
+                  <div class="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 mb-3">
+                      <span class="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">
+                          <i data-feather="user" class="w-3 h-3"></i> Admin
+                      </span>
+                  </div>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">{{ p.isi }}</p>
+              </div>
+              {% endfor %}
+          </div>
+      {% else %}
+          <div class="bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center flex flex-col items-center justify-center">
+              <i data-feather="volume-x" class="w-8 h-8 text-gray-400 mb-4"></i>
+              <h3 class="text-lg font-bold text-gray-800 dark:text-white">Belum ada pengumuman</h3>
+          </div>
+      {% endif %}
   </div>
 
 </div>
+
 <script>
   if (typeof feather !== 'undefined') { feather.replace(); }
+
+  // 1. Chart Riwayat Pembayaran (Bar)
+  const ctxPay = document.getElementById('paymentHistoryChart').getContext('2d');
+  new Chart(ctxPay, {
+      type: 'bar',
+      data: {
+          labels: {{ chart_labels | tojson }}, 
+          datasets: [{
+              label: 'Total Pembayaran',
+              data: {{ chart_data_bayar | tojson }},
+              backgroundColor: '#3b82f6', // Biru
+              borderRadius: 6
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+              y: {
+                  beginAtZero: true,
+                  ticks: { callback: function(value) { return 'Rp ' + (value/1000).toLocaleString() + 'k'; } }
+              },
+              x: { grid: { display: false } }
+          }
+      }
+  });
+
+  // 2. Chart Statistik Pengaduan (Doughnut)
+  // Data urutan: [Menunggu, Diproses, Selesai]
+  const aduanData = {{ aduan_stats | tojson }};
+  // Cek jika semua data 0 (belum pernah mengadu), kita kasih data dummy biar chart gak error/kosong
+  const isEmpty = aduanData.every(item => item === 0);
+
+  const ctxAduan = document.getElementById('complaintChart').getContext('2d');
+  new Chart(ctxAduan, {
+      type: 'doughnut',
+      data: {
+          labels: ['Menunggu', 'Diproses', 'Selesai'],
+          datasets: [{
+              data: isEmpty ? [0, 0, 1] : aduanData, // Kalau kosong, kasih 1 abu-abu
+              backgroundColor: isEmpty ? ['#e5e7eb', '#e5e7eb', '#e5e7eb'] : ['#facc15', '#3b82f6', '#22c55e'], 
+              borderWidth: 0
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { position: 'bottom' },
+            tooltip: { enabled: !isEmpty } // Matikan tooltip kalau data kosong
+          }
+      }
+  });
 </script>
 {% endblock %}

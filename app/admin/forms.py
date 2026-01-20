@@ -1,18 +1,27 @@
 from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired, Email, Optional
+from wtforms.validators import DataRequired, Email, Length, Optional
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, TextAreaField, PasswordField, SubmitField, IntegerField, SelectField, DateTimeLocalField
+from wtforms import HiddenField, StringField, TextAreaField, PasswordField, SubmitField, IntegerField, SelectField, DateTimeLocalField, DateField
 
 
 # =========================
-# Form Buat Penghuni
+# Form Kelola Penghuni
 # =========================
-class PenghuniForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Simpan')
+class UnifiedPenghuniForm(FlaskForm):
+    # === DATA LOGIN ===
+    username = StringField('Username', validators=[DataRequired(), Length(min=4)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[Optional(), Length(min=6)])
+    
+    # === DATA PROFIL ===
+    nama_lengkap = StringField('Nama Lengkap', validators=[DataRequired()])
+    no_hp = StringField('No. Handphone', validators=[DataRequired()])
+    jenis_kelamin = SelectField('Jenis Kelamin', choices=[('L', 'Laki-laki'), ('P', 'Perempuan')], validators=[DataRequired()])
+    tanggal_masuk = DateField('Tanggal Masuk', format='%Y-%m-%d', validators=[DataRequired()])
+    alamat = TextAreaField('Alamat Asal', validators=[Optional()])
 
+    submit = SubmitField('Simpan Data') 
+    
 
 # =========================
 # Form Peraturan
@@ -78,4 +87,13 @@ class JadwalForm(FlaskForm):
     keterangan = TextAreaField('Detail Kegiatan')
     submit = SubmitField('Simpan Jadwal')
 
+
+
+# =========================
+# Form Pengaduan
+# =========================
+class PengaduanForm(FlaskForm):
+    pengaduan_id = HiddenField(validators=[DataRequired()])
+    tanggapan = TextAreaField('Tanggapan', validators=[DataRequired()])
+    submit = SubmitField('Kirim Tanggapan')
 
