@@ -14,23 +14,36 @@
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ form.kamar_id.label }}
+                        {{ form.nomor_kamar.label }}
                     </label>
-                    {{ form.kamar_id(class="w-full border rounded-lg px-3 py-2 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500", placeholder="Cth: 101") }}
+                    {{ form.nomor_kamar(class="w-full border rounded-lg px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 cursor-not-allowed") }}
+                    
+                    {% for error in form.nomor_kamar.errors %}
+                        <span class="text-red-500 text-xs mt-1 block">* {{ error }}</span>
+                    {% endfor %}
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ form.bulan.label }}
+                        Untuk Pembayaran Bulan
                     </label>
-                    {{ form.bulan(class="w-full border rounded-lg px-3 py-2 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500", placeholder="Cth: Januari 2026") }}
+                    {{ form.bulan(class="w-full border rounded-lg px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 cursor-not-allowed", readonly=True) }}
+                    
+                    {% for error in form.bulan.errors %}
+                        <span class="text-red-500 text-xs mt-1 block">* {{ error }}</span>
+                    {% endfor %}
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        {{ form.jumlah.label }}
+                        Total Tagihan
                     </label>
-                    {{ form.jumlah(class="w-full border rounded-lg px-3 py-2 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 focus:ring-blue-500", placeholder="Cth: 500000") }}
+                    {{ form.jumlah(class="w-full border rounded-lg px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 cursor-not-allowed", readonly=True) }}
+                    <p class="text-xs text-blue-500 mt-1">*Nominal disesuaikan dengan harga kamar Anda.</p>
+                    
+                    {% for error in form.jumlah.errors %}
+                        <span class="text-red-500 text-xs mt-1 block">* {{ error }}</span>
+                    {% endfor %}
                 </div>
 
                 <div class="mb-4">
@@ -45,10 +58,14 @@
                         {{ form.bukti_transfer.label }} <span class="text-xs text-gray-500">(Wajib jika Transfer)</span>
                     </label>
                     {{ form.bukti_transfer(class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100") }}
+                    
+                    {% for error in form.bukti_transfer.errors %}
+                        <span class="text-red-500 text-xs mt-1 block">* {{ error }}</span>
+                    {% endfor %}
                 </div>
 
                 <div class="mt-6">
-                    {{ form.submit(class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl cursor-pointer transition") }}
+                    {{ form.submit(class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl cursor-pointer transition shadow-lg shadow-blue-500/30") }}
                 </div>
             </form>
         </div>
@@ -82,15 +99,17 @@
                         </thead>
                         <tbody>
                             {% for p in pembayaran[:5] %} 
-                            <tr class="border-b dark:border-gray-700">
+                            <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                                 <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ p.bulan }}</td>
                                 <td class="px-4 py-3">Rp {{ "{:,.0f}".format(p.jumlah).replace(',', '.') }}</td>
                                 <td class="px-4 py-3">{{ p.metode }}</td>
                                 <td class="px-4 py-3">
                                     {% if p.status == 'lunas' %}
-                                        <span class="text-green-600 font-bold">Lunas</span>
+                                        <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Lunas</span>
+                                    {% elif p.status == 'pending' %}
+                                        <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">Pending</span>
                                     {% else %}
-                                        <span class="text-yellow-600 font-bold">Pending</span>
+                                        <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Ditolak</span>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -99,7 +118,9 @@
                     </table>
                 </div>
                 {% else %}
-                <p class="text-gray-500">Belum ada riwayat pembayaran.</p>
+                <div class="text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-xl border border-dashed border-gray-300">
+                    <p class="text-gray-500">Belum ada riwayat pembayaran.</p>
+                </div>
                 {% endif %}
             </div>
         </div>
