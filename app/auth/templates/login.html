@@ -29,22 +29,29 @@
     <div class="flex flex-col items-center mb-8">
       <img src="{{ url_for('static', filename='img/logo.svg') }}" class="w-16 h-16 mb-4">
       <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-        Welcome Back!
+        {% if role == 'admin' %}
+            Login Admin
+        {% else %}
+            Welcome Back!
+        {% endif %}
       </h2>
-      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
-        Silakan login untuk masuk ke dashboard.
+
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1 text-center">
+        {% if role == 'admin' %}
+            Silakan login untuk mengelola sistem.
+        {% else %}
+            Silakan login untuk masuk ke dashboard.
+        {% endif %}
       </p>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <div class="mb-6 space-y-3">
+        <div class="mb-4 space-y-2">
           {% for category, message in messages %}
-            <div class="p-3 rounded-xl text-sm font-medium border flex items-center gap-2
-                 {{ 'bg-red-50 text-red-600 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' if category == 'danger' else 'bg-green-50 text-green-600 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' }}">
-              <span class="w-2 h-2 rounded-full {{ 'bg-red-500' if category == 'danger' else 'bg-green-500' }}"></span>
-              {{ message }}
-            </div>
+             <div class="p-3 rounded-lg text-sm font-medium bg-red-50 text-red-600 border border-red-200">
+                {{ message }}
+             </div>
           {% endfor %}
         </div>
       {% endif %}
@@ -59,7 +66,7 @@
                                 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white
                                 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition
                                 placeholder-gray-400 dark:placeholder-gray-500",
-                                placeholder="Masukkan username") }}
+                                placeholder="Masukkan username/email") }}
         
         {% for error in form.username.errors %}
            <p class="text-red-500 text-xs mt-1 font-medium">{{ error }}</p>
@@ -69,7 +76,7 @@
       <div>
         <div class="flex justify-between items-center mb-1">
             {{ form.password.label(class="block text-sm font-semibold text-gray-700 dark:text-gray-300") }}
-            </div>
+        </div>
         
         {{ form.password(class="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 
                                 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white
@@ -79,20 +86,31 @@
       </div>
 
       {{ form.submit(class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md 
-                           transform active:scale-95 transition-all duration-200 cursor-pointer") }}
+                            transform active:scale-95 transition-all duration-200 cursor-pointer") }}
     </form>
 
-    <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 text-center">
+ <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 text-center">
+    
+    {% if role == 'admin' %}
         <p class="text-sm text-gray-500 dark:text-gray-400">
             Admin belum punya akun? 
             <a href="{{ url_for('auth.register') }}" class="font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 hover:underline transition">
-            Daftar
+                Daftar
             </a>
         </p>
-        <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">
-            Penghuni silakan minta akun ke Admin Kos.
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-4">
+            <a href="{{ url_for('auth.login') }}" class="hover:text-blue-600 transition">
+                &larr; Masuk sebagai Penghuni
+            </a>
         </p>
-    </div>
+
+    {% else %}
+        <p class="text-xs text-gray-400 dark:text-gray-500">
+            Belum punya akun? Silakan hubungi Admin Kos untuk mendapatkan akses.
+        </p>
+    {% endif %}
+
+</div>
 
   </div>
 

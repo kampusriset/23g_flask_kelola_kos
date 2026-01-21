@@ -10,7 +10,7 @@ from app.models import User, Peraturan, Pengumuman, Kamar, Penghuni, Pengaduan, 
 from app.utils.decorators import role_required
 
 from . import admin_bp
-from .forms import PengaduanForm, PeraturanForm, PengumumanForm, ProfileForm, KamarForm, JadwalForm, UnifiedPenghuniForm
+from .forms import PengaduanForm, PeraturanForm, PengumumanForm, ProfileForm, KamarForm, JadwalForm, UnifiedPenghuniForm, TanggapanForm
 from datetime import datetime, date, timedelta
 
 # === ROUTE UNTUK TEST ===
@@ -579,40 +579,94 @@ def hapus_jadwal(id):
 
 
 
-
-@admin_bp.route('/pengaduan', methods=['GET', 'POST'])
-@admin_bp.route('/pengaduan/tanggapi/<int:id>', methods=['GET', 'POST'])
+# =========================
+# Route: Lihat Daftar Pengaduan
+# =========================
+@admin_bp.route('/pengaduan', methods=['GET'])
 @login_required
 @role_required('admin')
-def pengaduan(id=None):
+def pengaduan():
+    # Ambil semua data urut terbaru
     laporan_masuk = Pengaduan.query.order_by(Pengaduan.tanggal.desc()).all()
+    
+    # Form kosong untuk CSRF token di setiap item loop
+    form = TanggapanForm()
 
-    laporan_edit = None
-    edit_mode = False
-    form = PengaduanForm()
-
-    if id:
-        laporan_edit = Pengaduan.query.get_or_404(id)
-        edit_mode = True
-        form.pengaduan_id.data = laporan_edit.id
-
-    if form.validate_on_submit():
-        laporan = Pengaduan.query.get_or_404(form.pengaduan_id.data)
-        laporan.tanggapan = form.tanggapan.data
-        laporan.status = 'selesai'
-        db.session.commit()
-        flash('Tanggapan berhasil dikirim!', 'success')
-        return redirect(url_for('admin.pengaduan'))
+    # --- LOGIKA MANUAL ATTACHMENT (Jika belum ada relasi di models) ---
+    for l in laporan_masuk:
+        # Cari Penghuni
+        p_asli = Penghuni.query.get(l.penghuni_id)
+        if p_asli:
+            l.penghuni = p_asli
+            # Cari Kamar
+            if p_asli.kamar_id:
+                l.penghuni.kamar = Kamar.query.get(p_asli.kamar_id)
+            else:
+                l.penghuni.kamar = None
+        else:
+            # Data Dummy
+            l.penghuni = type('obj', (object,), {'nama': 'User Terhapus', 'kamar': None})
+    # ------------------------------------------------------------------
 
     return render_template(
         'pengaduan_admin.html',
         sidebar='partials/sidebar_admin.html',
         laporan_masuk=laporan_masuk,
-        form=form,
-        edit_mode=edit_mode,
-        laporan_edit=laporan_edit
+        form=form
     )
 
+# =========================
+# Route: Ubah Status ke DIPROSES
+# =========================
+@admin_bp.route('/pengaduan/proses/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def proses_pengaduan(id):
+    # Ambil data pengaduan
+    laporan = Pengaduan.query.get_or_404(id)
+    
+    # Hanya bisa diproses jika statusnya masih 'menunggu'
+    if laporan.status == 'menunggu':
+        laporan.status = 'diproses'
+        db.session.commit()
+        flash('Status pengaduan diubah menjadi DIPROSES.', 'info')
+    
+    return redirect(url_for('admin.pengaduan'))
+
+# =========================
+# Route: Hapus Pengaduan
+# =========================
+@admin_bp.route('/pengaduan/hapus/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def hapus_pengaduan(id):
+    laporan = Pengaduan.query.get_or_404(id)
+    db.session.delete(laporan)
+    db.session.commit()
+    flash('Laporan pengaduan berhasil dihapus.', 'success')
+    return redirect(url_for('admin.pengaduan'))
+
+# =========================
+# Route: Proses Tanggapan (POST Only)
+# =========================
+@admin_bp.route('/pengaduan/tanggapi/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def tanggapi_pengaduan(id):
+    form = TanggapanForm()
+    
+    # Ambil data pengaduan
+    laporan = Pengaduan.query.get_or_404(id)
+
+    if form.validate_on_submit():
+        laporan.tanggapan = form.tanggapan.data
+        laporan.status = 'selesai'
+        db.session.commit()
+        flash('Tanggapan berhasil dikirim dan status diperbarui!', 'success')
+    else:
+        flash('Gagal mengirim tanggapan. Pastikan isi tidak kosong.', 'danger')
+
+    return redirect(url_for('admin.pengaduan'))
 
 
 

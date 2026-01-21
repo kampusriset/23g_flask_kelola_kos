@@ -4,22 +4,6 @@
 
 <div class="max-w-3xl mx-auto space-y-6">
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="space-y-3">
-        {% for category, message in messages %}
-          <div class="flex items-center gap-3 p-4 rounded-xl border shadow-sm transition-all
-                      {{ 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' if category == 'success' else 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' }}">
-            <div class="{{ 'bg-green-100 dark:bg-green-800' if category == 'success' else 'bg-red-100 dark:bg-red-800' }} p-2 rounded-full">
-                <i data-feather="{{ 'check-circle' if category == 'success' else 'alert-circle' }}" class="w-5 h-5"></i>
-            </div>
-            <span class="font-medium text-sm">{{ message }}</span>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
-
     <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden relative">
         <form method="POST"
                 action="{{ url_for('penghuni.update_profile_photos') }}"

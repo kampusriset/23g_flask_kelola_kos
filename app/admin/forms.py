@@ -97,3 +97,10 @@ class PengaduanForm(FlaskForm):
     tanggapan = TextAreaField('Tanggapan', validators=[DataRequired()])
     submit = SubmitField('Kirim Tanggapan')
 
+
+# =========================
+# Form Tanggapan (Simpan di forms.py atau di atas routes)
+# =========================
+class TanggapanForm(FlaskForm):
+    tanggapan = TextAreaField('Tanggapan', validators=[DataRequired()])
+    submit = SubmitField('Kirim')
