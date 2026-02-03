@@ -1,4 +1,4 @@
-<img width="746" height="1091" alt="image" src="https://github.com/user-attachments/assets/d6995491-4acb-4205-9941-119d7473dc95" /># 23g_flask_kelola_kos_MyKost
+# 23g_flask_kelola_kos_MyKost
 # MyKost
 
 MyKost adalah aplikasi manajemen kos berbasis Flask, MySQL/MariaDB, dan TailwindCSS.
@@ -19,7 +19,7 @@ Anda dapat menonton video dokumentasi aplikasi melalui tautan berikut:
 
 ----------------------------------------------------------------
 # Flowchart
-<img width="746" height="1091" alt="image" src="https://github.com/user-attachments/assets/d6995491-4acb-4205-9941-119d7473dc95" />
+<img width="373" height="545" alt="image" src="https://github.com/user-attachments/assets/d6995491-4acb-4205-9941-119d7473dc95" />
 
 ----------------------------------------------------------------
 
