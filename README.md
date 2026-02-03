@@ -1,5 +1,5 @@
 # 23g_flask_kelola_kos_MyKost
-# MyKost App
+# MyKost
 
 MyKost adalah aplikasi manajemen kos berbasis Flask, MySQL/MariaDB, dan TailwindCSS.
 Aplikasi ini digunakan untuk mengelola data kamar, penghuni, pembayaran, pengaduan,
