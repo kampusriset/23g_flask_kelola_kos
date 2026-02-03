@@ -73,6 +73,7 @@
                                 <i data-feather="edit-2" class="w-4 h-4"></i>
                             </a>
                             <form action="{{ url_for('admin.hapus_jadwal', id=j.id) }}" method="POST" onsubmit="return confirm('Hapus jadwal ini?')">
+                                {{ form.hidden_tag() }}
                                 <button type="submit" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
                                     <i data-feather="trash-2" class="w-4 h-4"></i>
                                 </button>

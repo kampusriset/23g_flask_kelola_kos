@@ -39,6 +39,37 @@
   {% set nav_inactive = "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900
   dark:hover:text-white" %}
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="fixed top-5 right-5 z-[9999] w-full max-w-md px-4 md:px-0 space-y-3 pointer-events-none">
+        {% for category, message in messages %}
+          
+          {% if category == 'success' %}
+              {% set color_class = 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/90 dark:text-green-300 dark:border-green-800' %}
+              {% set icon_name = 'check-circle' %}
+          {% elif category == 'info' %}
+              {% set color_class = 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/90 dark:text-blue-300 dark:border-blue-800' %}
+              {% set icon_name = 'info' %}
+          {% else %}
+              {% set color_class = 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/90 dark:text-red-300 dark:border-red-800' %}
+              {% set icon_name = 'alert-circle' %}
+          {% endif %}
+
+          <div class="flash-message pointer-events-auto flex items-center justify-between gap-3 p-4 rounded-xl border shadow-lg backdrop-blur-sm transition-all duration-500 ease-in-out transform translate-y-0 opacity-100 {{ color_class }}" role="alert">
+            <div class="flex items-center gap-3">
+                <i data-feather="{{ icon_name }}" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="text-sm font-medium">{{ message }}</span>
+            </div>
+            <button onclick="closeAlert(this.parentElement)" class="p-1 hover:bg-black/10 rounded-full transition">
+                <i data-feather="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
   <div class="flex h-screen w-full">
 
     <!-- SIDEBAR -->
@@ -90,6 +121,32 @@
   </div>
 
   <script>
+  // ==========================================
+  // SCRIPT AUTO-HIDE MESSAGE
+  // ==========================================
+  
+  // Fungsi tutup manual
+  function closeAlert(element) {
+      element.style.opacity = '0';
+      element.style.transform = 'translateY(-20px)'; // Gerak naik sedikit
+      setTimeout(() => {
+          element.remove();
+      }, 500); 
+  }
+
+  // Fungsi tutup otomatis setelah 5 detik
+  document.addEventListener('DOMContentLoaded', function() {
+      const alerts = document.querySelectorAll('.flash-message');
+      
+      if(alerts.length > 0) {
+        alerts.forEach((alert, index) => {
+            setTimeout(() => {
+                closeAlert(alert);
+            }, 5000 + (index * 500)); 
+        });
+      }
+  });
+
     feather.replace()
   </script>
 

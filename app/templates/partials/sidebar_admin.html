@@ -57,7 +57,7 @@
       class="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white rounded-xl font-medium transition">
       <i data-feather="user" class="w-5 h-5"></i> <span>Profile</span>
     </a>
-    <a href="{{ url_for('auth.login') }}"
+    <a href="{{ url_for('auth.logout') }}"
       class="flex items-center gap-3 px-4 py-3 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl font-medium transition">
       <i data-feather="log-out" class="w-5 h-5"></i> <span>Logout</span>
     </a>
@@ -131,7 +131,7 @@
 
     <div class="border-t border-gray-100 dark:border-gray-700 my-2 pt-2">
       <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">Akun Saya</p>
-      <a href="{{ url_for('auth.login') }}"
+      <a href="{{ url_for('auth.logout') }}"
         class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 font-medium transition">
         <i data-feather="log-out" class="w-4 h-4"></i> Logout
       </a>
