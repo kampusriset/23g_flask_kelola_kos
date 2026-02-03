@@ -407,7 +407,16 @@ def kelola_kamar():
             flash('Kamar berhasil ditambahkan!', 'success')
             return redirect(url_for('admin.kelola_kamar'))
 
-    semua_kamar = Kamar.query.order_by(Kamar.nomor_kamar.asc()).all()
+    semua_kamar = Kamar.query.all()
+
+    def get_deadline(kamar):
+        if kamar.penghuni:
+            deadlines = [p.tanggal_keluar for p in kamar.penghuni if p.tanggal_keluar]
+            return min(deadlines) if deadlines else date.max
+        return date.max
+
+    semua_kamar = sorted(semua_kamar, key=get_deadline)
+
 
     return render_template(
         'kamar_admin.html',
@@ -460,7 +469,16 @@ def edit_kamar(id):
         flash('Data kamar berhasil diperbarui!', 'success')
         return redirect(url_for('admin.kelola_kamar'))
 
-    semua_kamar = Kamar.query.order_by(Kamar.nomor_kamar.asc()).all()
+    semua_kamar = Kamar.query.all()
+
+    def get_deadline(kamar):
+        if kamar.penghuni:
+            deadlines = [p.tanggal_keluar for p in kamar.penghuni if p.tanggal_keluar]
+            return min(deadlines) if deadlines else date.max
+        return date.max
+
+    semua_kamar = sorted(semua_kamar, key=get_deadline)
+
     
     return render_template(
         'kamar_admin.html',
