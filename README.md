@@ -1,9 +1,106 @@
-# 23g_flask_kelola_kos_MyKost
+<img width="746" height="1091" alt="image" src="https://github.com/user-attachments/assets/d6995491-4acb-4205-9941-119d7473dc95" /># 23g_flask_kelola_kos_MyKost
 # MyKost
 
 MyKost adalah aplikasi manajemen kos berbasis Flask, MySQL/MariaDB, dan TailwindCSS.
 Aplikasi ini digunakan untuk mengelola data kamar, penghuni, pembayaran, pengaduan,
 dan pengumuman kos dengan sistem role Admin dan Penghuni.
+
+----------------------------------------------------------------
+# Team
+- **Nafan Baihaqi** - [2313010563]
+- **Bagas Putra Baharuddin** - [2313010571]
+- **Muhammad Daffa Dzaki P** - [2313010546]
+- **Rafi Alif Firdaus** - [2313010560]
+
+----------------------------------------------------------------
+# Link Video Dokumentasi
+Anda dapat menonton video dokumentasi aplikasi melalui tautan berikut:
+[Klik di sini](https://youtu.be/NyZH2sPjc00)
+
+----------------------------------------------------------------
+# Flowchart
+<img width="746" height="1091" alt="image" src="https://github.com/user-attachments/assets/d6995491-4acb-4205-9941-119d7473dc95" />
+
+----------------------------------------------------------------
+
+STRUKTUR FOLDER (RINGKAS)
+
+    MyKost/
+    ├── app/
+    │   ├── admin/
+    │   ├── auth/
+    │   ├── penghuni/
+    │   ├── seeds/
+    │   ├── static/
+    │   ├── templates/
+    │   ├── utils/
+    │   ├── __init__.py
+    │   ├── config.py
+    │   ├── extensions.py
+    │   └── models.py
+    ├── migrations/
+    ├── Teams/
+    ├── .gitignore
+    ├── LICENSE
+    ├── package.json
+    ├── package-lock.json
+    ├── README.md
+    ├── requirements.txt
+    ├── run.py
+    ├── seed.py
+    ├── tailwind.config.js
+    └── test_db.py
+
+
+----------------------------------------------------------------
+
+CATATAN PENTING
+
+- Folder berikut TIDAK BOLEH di-commit ke GitHub:
+  venv/
+  .env
+  node_modules/
+  __pycache__/
+  database lokal
+
+- Semua perubahan schema database HARUS lewat Flask-Migrate
+
+----------------------------------------------------------------
+
+ROLE PENGGUNA
+
+ADMIN:
+- Mengelola kamar
+- Mengelola penghuni
+- Mengelola pengumuman
+- Mengelola peraturan
+- Mengelola jadwal
+- Melihat dan memvalidasi pembayaran
+- Melihat profil
+- Melihat pengaduan
+
+PENGHUNI:
+- Melihat data kamar
+- Melakukan pembayaran
+- Mengirim pengaduan
+- Melihat pengumuman
+- Melihat jadwal
+- Melihat peraturan
+- Melihat profil
+
+----------------------------------------------------------------
+
+STATUS PROYEK
+
+Dalam pengembangan
+
+Fitur utama:
+- Manajemen kamar
+- Manajemen penghuni
+- Pembayaran kos
+- Pengaduan
+- Pengumuman
+- Sistem login dan role
 
 ----------------------------------------------------------------
 
@@ -107,88 +204,6 @@ Akses aplikasi melalui browser:
     http://127.0.0.1:5000
 
 ----------------------------------------------------------------
-
-STRUKTUR FOLDER (RINGKAS)
-
-    MyKost/
-    ├── app/
-    │   ├── admin/
-    │   ├── auth/
-    │   ├── penghuni/
-    │   ├── seeds/
-    │   ├── static/
-    │   ├── templates/
-    │   ├── utils/
-    │   ├── __init__.py
-    │   ├── config.py
-    │   ├── extensions.py
-    │   └── models.py
-    ├── migrations/
-    ├── Teams/
-    ├── .gitignore
-    ├── LICENSE
-    ├── package.json
-    ├── package-lock.json
-    ├── README.md
-    ├── requirements.txt
-    ├── run.py
-    ├── seed.py
-    ├── tailwind.config.js
-    └── test_db.py
-
-
-----------------------------------------------------------------
-
-CATATAN PENTING
-
-- Folder berikut TIDAK BOLEH di-commit ke GitHub:
-  venv/
-  .env
-  node_modules/
-  __pycache__/
-  database lokal
-
-- Semua perubahan schema database HARUS lewat Flask-Migrate
-
-----------------------------------------------------------------
-
-ROLE PENGGUNA
-
-ADMIN:
-- Mengelola kamar
-- Mengelola penghuni
-- Mengelola pengumuman
-- Mengelola peraturan
-- Mengelola jadwal
-- Melihat dan memvalidasi pembayaran
-- Melihat profil
-- Melihat pengaduan
-
-PENGHUNI:
-- Melihat data kamar
-- Melakukan pembayaran
-- Mengirim pengaduan
-- Melihat pengumuman
-- Melihat jadwal
-- Melihat peraturan
-- Melihat profil
-
-----------------------------------------------------------------
-
-STATUS PROYEK
-
-Dalam pengembangan
-
-Fitur utama:
-- Manajemen kamar
-- Manajemen penghuni
-- Pembayaran kos
-- Pengaduan
-- Pengumuman
-- Sistem login dan role
-
-----------------------------------------------------------------
-
 LISENSI
 
 MIT License
