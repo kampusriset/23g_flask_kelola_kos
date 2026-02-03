@@ -19,7 +19,7 @@ Anda dapat menonton video dokumentasi aplikasi melalui tautan berikut:
 
 ----------------------------------------------------------------
 # Flowchart
-<img width="373" height="545" alt="image" src="https://github.com/user-attachments/assets/d6995491-4acb-4205-9941-119d7473dc95" />
+<img width="746" height="1091" alt="Flowchart kamar   pembayaran mykost drawio" src="https://github.com/user-attachments/assets/55883246-463f-4960-b4f0-4b2c0c3db0a3" />
 
 ----------------------------------------------------------------
 
